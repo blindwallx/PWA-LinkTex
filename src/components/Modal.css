@@ -1,0 +1,260 @@
+/* Estilos para el overlay del modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    padding: 15px; /* Para asegurar espacio en pantallas pequeñas */
+    box-sizing: border-box; /* Incluir padding en el ancho/alto total */
+}
+
+/* Estilos para el contenido del modal */
+.modal-content {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px; /* Ancho máximo para el modal */
+    max-height: 90vh; /* Altura máxima para permitir scroll interno */
+    overflow-y: auto; /* Habilitar scroll si el contenido es largo */
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.modal-header .close-button {
+    background: none;
+    border: none;
+    font-size: 1.8em;
+    cursor: pointer;
+    color: #888;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.modal-header .close-button:hover {
+    color: #555;
+    background-color: #f0f0f0;
+}
+
+.modal-body {
+    flex-grow: 1; /* Permite que el cuerpo del modal ocupe el espacio restante */
+}
+
+
+.modal-form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+    border: 1px solid #e0e0e0;
+}
+
+.modal-form h4 {
+    margin-top: 0;
+    color: #555;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
+
+.modal-form input[type="text"],
+.modal-form input[type="number"],
+.modal-form input[type="date"] { /* <-- AÑADIDO: Aplicar estilos a input[type="date"] */
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.modal-form input[type="date"]:disabled { /* <-- NUEVO: Estilo para input de fecha deshabilitado */
+    background-color: #e9ecef;
+    cursor: not-allowed;
+    color: #3f4042;
+}
+
+
+/* <-- NUEVO: Estilo para las etiquetas de los inputs de fecha */
+.modal-form .input-label {
+    display: block; /* Asegura que la etiqueta esté en su propia línea */
+    margin-bottom: 5px; /* Espacio entre la etiqueta y el input */
+    font-size: 0.9em;
+    color: #555;
+    font-weight: 600;
+}
+
+
+.modal-form .form-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap; /* Para responsive */
+    margin-top: 15px; /* Espacio superior para los botones después de los inputs de fecha */
+}
+
+.modal-form .form-actions button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.modal-form .form-actions button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+}
+
+.modal-form .form-actions button[type="submit"]:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+.modal-form .form-actions .cancel-button {
+    background-color: #6c757d;
+    color: white;
+}
+
+.modal-form .form-actions .cancel-button:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+.current-items-list h5 {
+    color: #333;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #ddd;
+    padding-bottom: 8px;
+}
+
+.current-items-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.current-items-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    border: 1px solid #e9e9e9;
+    flex-wrap: wrap; /* Permite que el contenido se envuelva en móvil */
+}
+
+.current-items-list li span {
+    flex-grow: 1;
+    font-size: 0.95em;
+    color: #444;
+    line-height: 1.4; /* Mejora la legibilidad en múltiples líneas */
+}
+
+.item-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px; /* Espacio superior en móvil si el texto se envuelve */
+}
+
+/* Reusar estilos existentes para botones de editar/eliminar */
+.item-actions .icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.item-actions .edit-button {
+    color: #007bff;
+}
+
+.item-actions .edit-button:hover {
+    background-color: #e6f2ff;
+}
+
+.item-actions .delete-button {
+    color: #dc3545;
+}
+
+.item-actions .delete-button:hover {
+    background-color: #ffe0e3;
+}
+
+.error-message {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+.no-items-message {
+    color: #777;
+    font-style: italic;
+    text-align: center;
+    padding: 15px;
+    border: 1px dashed #ccc;
+    border-radius: 5px;
+    background-color: #fafafa;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 15px;
+        width: 95%;
+    }
+
+    .modal-header h3 {
+        font-size: 1.3em;
+    }
+
+    .modal-form input[type="text"],
+    .modal-form input[type="number"],
+    .modal-form input[type="date"] {
+        width: 100%; /* Asegura que los inputs de fecha también sean 100% en móvil */
+        margin-bottom: 10px; /* Reducir un poco el margen inferior */
+    }
+
+    .modal-form .form-actions {
+        flex-direction: column; /* Apila los botones en móvil */
+        margin-top: 10px; /* Reducir margen superior */
+    }
+
+    .modal-form .form-actions button {
+        width: 100%; /* Botones de acción al 100% en móvil */
+    }
+}

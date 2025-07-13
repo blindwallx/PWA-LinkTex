@@ -1,0 +1,150 @@
+/* src/components/AuthForms.css - ESTILOS MEJORADOS PARA RESPONSIVIDAD */
+
+.auth-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente más legible */
+  padding: 20px; /* Padding general para evitar que el contenido toque los bordes */
+  box-sizing: border-box; /* Incluir padding en el tamaño total */
+}
+
+.auth-form-container h2 {
+  margin-bottom: 30px;
+  color: #34495e; /* Un gris muy oscuro o azul casi negro - Contraste alto sobre blanco */
+  /* Opcional: Si el fondo del formulario fuera oscuro, podrías usar color: #FFFFFF; (blanco) */
+  font-size: 2em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.auth-form {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Ocupa todo el ancho disponible */
+  max-width: 400px; /* Pero no más de 400px en pantallas grandes */
+  text-align: center;
+  box-sizing: border-box; /* Incluir padding en el tamaño total */
+}
+
+.auth-form h2 {
+  margin-bottom: 30px;
+  color: #333;
+  font-size: 1.8em; /* Ajusta el tamaño del título */
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%; /* Ocupa el 100% del ancho del contenedor del formulario */
+  padding: 12px; /* Aumenta el padding para mejor touch en móviles */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+  box-sizing: border-box; /* Incluir padding y borde en el tamaño total */
+}
+
+.auth-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Añade transformación para feedback visual */
+  margin-top: 10px;
+}
+
+.auth-button.primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.auth-button.primary:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px); /* Pequeño efecto al pasar el mouse */
+}
+
+.error-message {
+  color: #dc3545;
+  margin-top: 15px;
+  font-size: 0.9em;
+  padding: 10px;
+  background-color: #ffeaea;
+  border-radius: 4px;
+  border: 1px solid #dc3545;
+}
+
+.success-message {
+    color: #28a745;
+    margin-top: 15px;
+    font-size: 0.9em;
+    padding: 10px;
+    background-color: #eaffef;
+    border-radius: 4px;
+    border: 1px solid #28a745;
+}
+
+.auth-switch-link {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.auth-switch-link a, .forgot-password a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.auth-switch-link a:hover, .forgot-password a:hover {
+    text-decoration: underline;
+}
+
+.forgot-password {
+    margin-top: 15px;
+    font-size: 0.9em;
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 600px) {
+  .auth-form {
+    padding: 20px; /* Menos padding en pantallas pequeñas */
+    margin: 10px; /* Un poco de margen para no tocar los bordes del móvil */
+  }
+
+  .auth-form h2 {
+    font-size: 1.5em; /* Título más pequeño en móviles */
+  }
+
+  .form-group input, .auth-button {
+    padding: 10px; /* Ajusta el padding en inputs y botones para pantallas más pequeñas */
+  }
+
+  .auth-button {
+    font-size: 1em; /* Fuente más pequeña en botones */
+  }
+}
+
+/* Asegúrate de que el body y html ocupen el 100% de la altura */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}

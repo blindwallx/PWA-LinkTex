@@ -1,0 +1,706 @@
+/* src/components/ProductManagement.css */
+
+.product-management-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    min-height: calc(100vh - 80px); /* Ajusta con la altura del navbar */
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1400px;
+    overflow-x: auto; /* Permite scroll horizontal para la tabla de escritorio */
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    -webkit-overflow-scrolling: touch; /* Mejora el scroll en iOS */
+}
+
+.products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1400px;
+    margin-bottom: 30px;
+    padding: 0 10px; /* Padding para escritorio */
+    box-sizing: border-box; /* Asegura que el padding se incluya en el ancho */
+}
+
+.product-management-container h2 {
+    color: rgb(57, 57, 110);
+    font-size: 2.5em;
+    font-weight: 700;
+    margin: 0;
+}
+
+.product-form,
+.processes-manage-form:not(.accordion-sub-form), /* Excluye el estilo base para los acordeones */
+.variant-form:not(.accordion-sub-form) {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.product-form h3,
+.processes-manage-form h4,
+.variant-form h4 {
+    color: rgb(57, 57, 110);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.product-form input,
+.processes-manage-form input,
+.variant-form input {
+    padding: 12px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    font-size: 1.1em;
+    width: 100%;
+    box-sizing: border-box;
+    color: #333;
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-form input:focus,
+.processes-manage-form input:focus,
+.variant-form input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+.product-form button,
+.add-new-product-button,
+.toggle-button,
+.add-process-button,
+.processes-manage-form button,
+.variant-form button {
+    padding: 12px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.product-form button:hover,
+.add-new-product-button:hover,
+.toggle-button:hover,
+.add-process-button:hover,
+.processes-manage-form button:hover,
+.variant-form button:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+.product-form .cancel-button,
+.processes-manage-form .cancel-button,
+.variant-form .cancel-button {
+    background-color: #6c757d;
+}
+
+.product-form .cancel-button:hover,
+.processes-manage-form .cancel-button:hover,
+.variant-form .cancel-button:hover {
+    background-color: #5a6268;
+}
+
+.product-form button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.error-message {
+    background-color: #ffe0e0;
+    color: #d32f2f;
+    padding: 15px 25px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border: 1px solid #d32f2f;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1em;
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+.no-products-message,
+.no-items-message {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin-top: 20px;
+}
+
+.add-new-product-button {
+    margin-top: 0;
+    width: auto;
+    padding: 10px 20px;
+}
+
+/* --- Estilos para el filtro de búsqueda --- */
+.search-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+.search-icon {
+    color: #888;
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.search-input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    padding: 5px;
+    background-color: transparent;
+    color: #333;
+}
+
+.search-input::placeholder {
+    color: #656363;
+}
+
+.no-results-message {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    border: 1px dashed #ccc;
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+/* --- Estilos para la tabla de productos (versión escritorio) --- */
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px; /* Asegura un ancho mínimo para que el scroll sea útil */
+}
+
+.product-table th,
+.product-table td {
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    color: #333;
+    padding: 12px 15px; /* Ajuste para un poco más de espacio */
+    font-weight: bold;
+}
+
+.product-table th {
+    background-color: #e9ecef;
+    color: #34495e;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    white-space: nowrap; /* Evita que los encabezados de tabla se rompan en múltiples líneas */
+}
+
+.product-table tbody tr:hover {
+    background-color: #ded9d9;
+}
+
+
+.process-summary-cell,
+.variant-summary-cell {
+    /* max-width: 200px; // Mantén si es un límite deseado, pero el white-space: normal lo gestionará */
+    white-space: normal; /* Permitir que el contenido de las listas se envuelva */
+    word-wrap: break-word; /* Agregamos esto para forzar el salto de línea si una palabra es muy larga */
+    font-size: 0.9em;
+    position: relative; /* Esencial para el posicionamiento absoluto del botón */
+    vertical-align: top; /* Alinea el contenido en la parte superior de la celda */
+    /* Añadir padding-right para evitar que el texto se superponga con el botón */
+    padding-right: 60px; /* Ajusta este valor según el ancho de tu botón + margen */
+}
+
+.process-list-compact,
+.variant-list-compact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: #555;
+    /* Asegurarse de que las listas ocupen el espacio disponible */
+    /* width: 100%; // Opcional si ya está por defecto o no necesitas flex/grid en la celda */
+}
+
+.process-list-compact li,
+.variant-list-compact li {
+    margin-bottom: 2px;
+}
+
+/* --- Botones Gestionar Procesos y Gestionar Stock (toggle-sub-form-button) --- */
+.toggle-sub-form-button {
+    background-color: #218838; /* Un color primario más neutral para "Gestionar" */
+    color: white;
+    border: none;
+    border-radius: 6px; /* Más redondeado, como otros botones */
+    padding: 8px 12px; /* Un poco más de padding */
+    font-size: 0.9em; /* Un poco más grande que antes */
+    font-weight: 600; /* Ligeramente más negrita */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    /* margin-top: 5px; // Se va a posicionar absolutamente, este margen no es necesario */
+    display: inline-flex; /* Para alinear el icono y el texto */
+    align-items: center;
+    justify-content: center;
+    gap: 6px; /* Espacio entre icono y texto */
+    min-width: unset;
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2); /* Sutil sombra */
+
+    /* CLAVE PARA FIJAR EL BOTÓN EN ESCRITORIO */
+    position: absolute; /* Posicionamiento absoluto relativo a la celda padre */
+    top: 50%; /* Intenta centrarlo verticalmente */
+    right: 15px; /* Fija a la derecha de la celda, ajusta si el padding-right no es suficiente */
+    transform: translateY(-50%); /* Ajusta para centrado vertical perfecto */
+    white-space: nowrap; /* Asegura que el texto del botón no se rompa */
+}
+
+.toggle-sub-form-button:hover {
+    background-color: #0b561b; /* Tono más oscuro al pasar el ratón */
+    transform: translateY(-50%) scale(1.02); /* Escala ligeramente en hover */
+}
+
+.product-actions-cell {
+    width: 150px;
+    text-align: center;
+    white-space: nowrap; /* Evita que los botones se apilen si no es necesario */
+}
+
+.product-actions-cell button {
+    padding: 6px 10px;
+    font-size: 1.1em;
+    margin: 5px 10px;
+    width: 30%;
+    display: inline;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+}
+
+.edit-button {
+    color: #007bff;
+}
+.edit-button:hover {
+    color: #074282;
+}
+
+.delete-button {
+    color: #af0516;
+}
+.delete-button:hover {
+    color: #57030c;
+    border: 1px solid #57030c;
+}
+
+/* --- Estilos para los formularios expandidos (Procesos/Stock) en escritorio --- */
+.expanded-form-row {
+    background-color: #fefefe;
+    border-bottom: 2px solid #007bff;
+}
+
+.expanded-form-row td {
+    padding: 0;
+}
+
+.expanded-sub-form {
+    background-color: #fefefe;
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 0;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: all 0.3s ease-in-out; /* Transición para cambios */
+}
+
+.expanded-sub-form h4 {
+    margin-top: 0;
+    color: #34495e;
+}
+
+.expanded-sub-form .form-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.expanded-sub-form .form-controls input {
+    flex: 1;
+    min-width: 120px;
+    background-color: #fff;
+}
+
+.expanded-sub-form .form-controls button {
+    margin-top: 0;
+    padding: 8px 12px;
+    font-size: 0.9em;
+}
+
+.current-processes-list,
+.current-variants-list {
+    margin-top: 10px;
+}
+
+.current-processes-list h5,
+.current-variants-list h5 {
+    color: #34495e;
+    margin-bottom: 10px;
+    font-size: 1em;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 5px;
+}
+
+.current-processes-list ul,
+.current-variants-list ul {
+    list-style: decimal;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.current-processes-list li,
+.current-variants-list li {
+    background-color: #fcfcfc;
+    padding: 6px 10px;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85em;
+    color: #444;
+}
+
+.small-icon-button {
+    padding: 5px 8px;
+    font-size: 0.9em;
+    min-width: unset;
+}
+
+/* --- Media Queries para responsividad --- */
+
+/* Ocultar tabla de escritorio y mostrar tarjetas en móvil por defecto */
+.desktop-only {
+    display: table; /* Ocultar en móvil, mostrar en escritorio */
+}
+
+.mobile-only {
+    display: none; /* Ocultar en escritorio, mostrar en móvil */
+}
+
+@media (max-width: 1024px) {
+    .product-table {
+        min-width: 600px;
+    }
+    .product-table th,
+    .product-table td {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 768px) {
+    .desktop-only {
+        display: none; /* Oculta la tabla en móvil */
+    }
+
+    .mobile-only {
+        display: block; /* Muestra el diseño de tarjetas en móvil */
+        width: 100%;
+        max-width: 600px; /* Limita el ancho de las tarjetas en pantallas grandes de móvil */
+    }
+
+    .products-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        width: calc(100% - 40px); /* Ajusta el ancho para el padding del contenedor principal */
+        padding: 0;
+        margin-left: 0; /* Asegura que no haya márgenes no deseados */
+        margin-right: 0;
+    }
+
+    .product-management-container h2 {
+        font-size: 2em;
+    }
+
+    .add-new-product-button {
+        width: 100%; /* El botón ocupa todo el ancho */
+        padding: 10px;
+        font-size: 1em;
+        justify-content: center;
+    }
+    .add-new-product-button span {
+        display: inline; /* Mostrar el texto del botón en móvil */
+        margin-left: 8px;
+    }
+
+    .product-form,
+    .error-message,
+    .search-bar, /* Ajuste para la barra de búsqueda en móvil */
+    .no-results-message { /* Ajuste para el mensaje de no resultados en móvil */
+        padding: 5px;
+        width: calc(100% - 40px); /* Ajusta el ancho para el padding del contenedor principal */
+        max-width: none; /* Elimina la restricción de max-width */
+    }
+
+    /* --- Estilos para las tarjetas de producto en móvil --- */
+    .card-section button{
+        background-color: #218838;
+    }
+
+    .card-section button:hover{
+        background-color: #0b561b;
+    }
+
+    .product-cards-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px; /* Espacio entre tarjetas */
+        padding: 0 10px; /* Padding horizontal para el contenedor de tarjetas */
+        box-sizing: border-box;
+    }
+
+    .product-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        overflow: hidden; /* Para las transiciones de contenido */
+        border: 1px solid #e0e0e0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-card .card-header {
+        background-color: #f5f5f5;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .product-card .product-name {
+        font-size: 1.3em;
+        color: #2c3e50;
+        margin: 0;
+        font-weight: 600;
+        font-weight: bold;
+    }
+
+    .product-card .product-ref {
+        font-size: 0.9em;
+        color: #6c757d;
+        font-weight: bold;
+    }
+
+    .product-card .card-body {
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .product-card .product-cost {
+        font-size: 1em;
+        color: #34495e;
+        margin: 0;
+    }
+
+    .product-card .card-actions {
+        /* MODIFICACIÓN CLAVE PARA MÓVIL: Botones Editar/Eliminar en fila */
+        display: flex;
+        flex-direction: row; /* Coloca los botones en fila */
+        justify-content: space-evenly; /* Espacia los botones uniformemente */
+        align-items: center;
+        gap: 10px;
+        padding: 15px;
+        border-top: 1px solid #eee;
+    }
+
+    .product-card .card-actions button {
+        /* Ajusta el ancho para que quepan en la fila */
+        width: 48%; /* Ocupa casi la mitad del ancho, dejando un espacio */
+        padding: 10px 15px;
+        font-size: 1.2em;
+        margin: 0; /* Eliminar margen para que flexbox controle el espacio */
+        background: none;
+    }
+
+    /* --- Estilos del Acordeón --- */
+    .accordion-item {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        overflow: hidden; /* Para que la animación de height funcione */
+    }
+
+    .accordion-header {
+        width: 100%;
+        background-color: #f8f8f8;
+        padding: 12px 15px;
+        text-align: left;
+        border: none;
+        border-bottom: 1px solid #e0e0e0;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1em;
+        font-weight: 600;
+        color: #34495e;
+        transition: background-color 0.3s ease;
+        margin-top: 0; /* Sobrescribe el margin-top de botones generales */
+        border-radius: 8px 8px 0 0;
+    }
+
+    .accordion-header:hover {
+        background-color: #e9ecef;
+    }
+
+    .accordion-header.active {
+        background-color: #e0f2f7; /* Un color diferente cuando está activo */
+        color: #007bff;
+        border-bottom-color: #007bff;
+    }
+
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-out, padding 0.3s ease-out, opacity 0.3s ease-out;
+        opacity: 0;
+        padding: 0 15px; /* Padding solo cuando está visible */
+    }
+
+    .accordion-content.show {
+        max-height: 1000px; /* Suficientemente grande para contener el contenido */
+        padding: 15px; /* Restaura el padding */
+        opacity: 1;
+        transition: max-height 0.5s ease-in, padding 0.4s ease-in, opacity 0.4s ease-in;
+    }
+
+    .accordion-sub-form {
+        padding: 0; /* El padding ya lo maneja .accordion-content */
+        box-shadow: none;
+        border: none;
+        background-color: transparent;
+        margin-bottom: 0;
+    }
+
+    .accordion-sub-form .form-controls {
+        flex-direction: column;
+        align-items: stretch;
+        border-bottom: none; /* Eliminar borde inferior */
+        padding-bottom: 0;
+    }
+
+    .accordion-sub-form .form-controls input,
+    .accordion-sub-form .form-controls button {
+        width: 100%;
+        min-width: unset;
+        margin-top: 8px;
+    }
+
+    .current-processes-list,
+    .current-variants-list {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed #e0e0e0; /* Separador para la lista */
+    }
+
+    .current-processes-list ul,
+    .current-variants-list ul {
+        list-style: none; /* Sin viñetas en móvil para las listas internas */
+        padding-left: 0;
+    }
+
+    .current-processes-list li,
+    .current-variants-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 12px;
+        gap: 5px;
+        background-color: #fdfdfd;
+    }
+
+    .current-processes-list li span,
+    .current-variants-list li span {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .process-actions,
+    .variant-actions {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end; /* Alinea los botones de acción a la derecha */
+        gap: 5px;
+    }
+
+    .small-icon-button {
+        padding: 8px; /* Un poco más grandes para táctil */
+        font-size: 0.8em;
+    }
+}
+
+/* Visibilidad de los íconos */
+.icon-button span {
+    display: inline; /* Por defecto con texto */
+    margin-left: 5px;
+}
+
+/* El media query de 768px ya lo sobrescribe para los botones dentro de la tabla */
+/* En el nuevo diseño de tarjetas en móvil, el texto del ícono vuelve a ser visible */
+
+#subh3{
+    color: #34495e;
+}

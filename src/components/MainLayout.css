@@ -1,0 +1,19 @@
+/* src/components/MainLayout.css */
+
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f0f2f5; /* Un fondo gris claro agradable */
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px; /* Padding general */
+    padding-top: 80px; /* Ajusta este valor. Debe ser mayor que la altura de tu navbar. Si tu navbar mide 60px, 80px es un buen inicio. */
+    box-sizing: border-box; /* Incluye padding en el ancho/alto total */
+    max-width: 1800px; /* AUMENTADO: Limita el ancho del contenido para mejor legibilidad en pantallas grandes */
+    margin: 0 auto; /* Centra el contenido */
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
+}
+

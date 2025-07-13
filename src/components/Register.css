@@ -1,0 +1,190 @@
+/* src/components/Register.css */
+
+.register-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f0f2f5; /* Un fondo gris claro agradable */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.register-container h2 {
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-size: 2.2em;
+  font-weight: 700;
+  text-align: center;
+}
+
+.register-form {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espacio entre los elementos del formulario */
+}
+
+.register-form input[type="text"],
+.register-form input[type="email"],
+.register-form input[type="password"] {
+  padding: 15px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 1.1em;
+  width: 100%;
+  box-sizing: border-box; /* Asegura que el padding no aumente el ancho total */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-form input[type="text"]:focus,
+.register-form input[type="email"]:focus,
+.register-form input[type="password"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  outline: none; /* Elimina el contorno predeterminado del navegador */
+}
+
+.register-form button {
+  padding: 15px 20px;
+  background-color: #28a745; /* Un verde vibrante para la acción principal */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.register-form button:hover {
+  background-color: #218838; /* Un tono más oscuro al pasar el ratón */
+  transform: translateY(-2px); /* Un ligero efecto de levantamiento */
+}
+
+.register-form button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.error-message {
+  background-color: #ffe0e0;
+  color: #d32f2f;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  border: 1px solid #d32f2f;
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.95em;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+}
+
+.login-link {
+  margin-top: 25px;
+  font-size: 1em;
+  color: #555;
+}
+
+.login-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Estilos para el mensaje de éxito de registro */
+.register-container.success-message {
+  background-color: #e6ffe6; /* Fondo verde claro para éxito */
+  border: 1px solid #28a745;
+  color: #1a7a2e;
+  text-align: center;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  box-sizing: border-box;
+}
+
+.register-container.success-message h2 {
+  color: #28a745;
+  margin-bottom: 20px;
+}
+
+.register-container.success-message p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+  font-size: 1.1em;
+}
+
+.register-container.success-message strong {
+  color: #0056b3; /* Azul para resaltar el ID */
+  font-size: 1.2em;
+  word-break: break-all; /* Para asegurar que el ID largo no desborde */
+}
+
+.go-to-dashboard-button {
+  background-color: #007bff;
+  color: white;
+  padding: 14px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.15em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 30px;
+  margin-bottom: 20px; /* Espacio antes del enlace de login */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.go-to-dashboard-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 600px) {
+  .register-container {
+    padding: 15px;
+  }
+
+  .register-form, .register-container.success-message {
+    padding: 25px;
+    margin: 15px; /* Asegura un pequeño margen en pantallas muy pequeñas */
+  }
+
+  .register-container h2 {
+    font-size: 1.8em;
+    margin-bottom: 25px;
+  }
+
+  .register-form input,
+  .register-form button,
+  .go-to-dashboard-button {
+    font-size: 1em;
+    padding: 12px;
+  }
+
+  .error-message {
+    padding: 10px 15px;
+    font-size: 0.9em;
+  }
+}

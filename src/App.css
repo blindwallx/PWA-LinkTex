@@ -1,0 +1,23 @@
+/* src/App.css */
+html, body, #root {
+  height: 100%; /* Asegura que ocupen toda la altura del viewport */
+  width: 100%;  /* Asegura que ocupen todo el ancho del viewport */
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Evita barras de desplazamiento horizontales no deseadas */
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.App {
+  display: flex; /* Habilita Flexbox */
+  justify-content: center; /* Centra el contenido horizontalmente */
+  align-items: center; /* Centra el contenido verticalmente */
+  min-height: 100vh; /* Asegura que ocupe al menos la altura completa del viewport */
+  width: 100%; /* Asegura que ocupe el 100% del ancho disponible */
+  background-color: #f0f2f5; /* El mismo color de fondo que los formularios */
+}

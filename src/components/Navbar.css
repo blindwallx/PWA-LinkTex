@@ -1,0 +1,222 @@
+.navbar {
+  background-color: rgb(57, 57, 110); 
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  position: fixed; 
+  top: 0;
+  left: 0; 
+  z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.navbar-left {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: auto;
+}
+
+.navbar-brand a { /* También aplica a NavLink */
+  color: white; /* Esto ya no es tan relevante porque ahora es una imagen */
+  text-decoration: none; /* Esto ya no es tan relevante porque ahora es una imagen */
+  /* font-size: 1.8em; Quita esto para que el tamaño lo controle la imagen */
+  font-weight: bold; /* Quita esto */
+  letter-spacing: 1px; /* Quita esto */
+  display: flex; /* Para centrar el logo si es necesario */
+  align-items: center;
+}
+
+/* NUEVOS ESTILOS PARA EL LOGO */
+.navbar-logo {
+  height: 170px; /* Ajusta esto al tamaño deseado para tu logo */
+  width: auto; /* Mantener la proporción */
+  vertical-align: middle; /* Para alinear con otros elementos si los hubiera */
+  position: absolute;
+}
+
+
+.navbar-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.nav-item {
+  margin-left: 25px;
+}
+
+.nav-item a { /* Estilos base para los NavLink */
+  color: white;
+  text-decoration: none;
+  font-size: 1.1em;
+  padding: 5px 0;
+  transition: color 0.3s ease, border-bottom 0.3s ease; /* Añade transición para el borde */
+}
+
+.nav-item a:hover {
+  color: #cceeff; /* Un tono más claro para el hover, manteniendo la armonía con el azul */
+  /* font-size: 1.2em; Si quieres que haga zoom, déjalo. Si no, quítalo. */
+}
+
+/* ESTILOS PARA EL ENLACE ACTIVO */
+.nav-item a.active {
+  color: #ffffff; /* Color blanco para el elemento activo para que resalte sobre el fondo azul */
+  font-weight: bold; /* Negrita para destacarlo más */
+  border-bottom: 2px solid #ffffff; /* Una línea inferior blanca para subrayar */
+  padding-bottom: 2px; /* Espacio entre el texto y la línea */
+}
+/* Asegúrate de que el hover no anule el active */
+.nav-item a.active:hover {
+    color: #ffffff; /* Mantener el color activo al pasar el mouse */
+}
+
+
+.nav-logout-button {
+  padding: 8px 15px;
+  background-color: #d8672a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 25px;
+  display: flex; /* Para alinear el icono y el texto */
+  align-items: center; /* Para centrar verticalmente */
+  gap: 8px; /* Espacio entre el icono y el texto */
+}
+
+.nav-logout-button:hover {
+  background-color: #c0392b;
+}
+
+/* NUEVOS ESTILOS PARA EL ICONO DE LOGOUT */
+.logout-icon {
+  font-size: 1.3em; /* Ajusta el tamaño del icono */
+  vertical-align: middle; /* Para alinear bien con el texto si lo hay */
+}
+
+
+
+/* Estilos para el botón de hamburguesa (oculto por defecto en desktop) */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 25px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 20px;
+}
+
+.hamburger-menu .bar {
+  width: 100%;
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Media Queries para Navbar responsive (menos ancho o desplegable) */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px;
+
+  }
+
+  .navbar-logo {
+  height: 120px; /* Ajusta esto al tamaño deseado para tu logo */
+  width: auto; /* Mantener la proporción */
+  vertical-align: middle; /* Para alinear con otros elementos si los hubiera */
+  position: absolute;
+}
+
+  .navbar-left {
+    width: 100%;
+  }
+
+  .hamburger-menu {
+    display: flex;
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: rgb(57, 57, 110); 
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translateY(-120%);
+    opacity: 0;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .navbar-nav.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav-item {
+    margin: 0;
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .nav-item:last-child {
+      border-bottom: none;
+  }
+
+  .nav-item a,
+  .nav-logout-button {
+    display: block;
+    padding: 15px 20px;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    /* Remover flex en móvil para que el botón ocupe todo el ancho */
+    display: flex; /* Mantenemos flex para alinear icono/texto */
+    justify-content: flex-start; /* Alinear a la izquierda */
+    align-items: center;
+  }
+  /* Estilos para el enlace activo en móvil */
+  .nav-item a.active {
+    color: #ffffff; /* Color blanco para el elemento activo en móvil */
+    background-color: rgba(255,255,255,0.08); /* Un fondo sutil para el elemento activo en móvil */
+    border-left: 5px solid #ffffff; /* Una barra lateral blanca para destacarlo */
+    padding-left: 15px; /* Ajusta el padding para la barra lateral */
+    border-bottom: none; /* Quita el borde inferior si estaba */
+  }
+
+  .nav-logout-button {
+      background-color: transparent;
+      color: #d8672a;
+      font-weight: bold;
+      border: none;
+      /* text-align: left; Esto se maneja con 'justify-content: flex-start' en el display flex */
+  }
+  .nav-logout-button:hover {
+      background-color: rgba(255,255,255,0.1);
+  }
+
+  /* Ocultar el texto "Cerrar Sesión" en móvil si solo quieres el icono */
+  .logout-text {
+    display: none; /* Oculta el texto en pantallas pequeñas para que solo quede el icono */
+  }
+}
