@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { auth } from '../firebaseConfig';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import './AuthForms.css';
+import logo from '../assets/ltcadena2.png';
+import './Login.css';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -54,13 +55,15 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="auth-form-container">
-      <h2>Iniciar Sesión en LinkTex</h2>
-      <form onSubmit={handleLogin} className="auth-form">
+    <div className="register-container">
+      <img src={logo} className="myLogo" />
+      <h2>Iniciar Sesión</h2>
+      <form onSubmit={handleLogin} className="register-form">
         <div className="form-group">
           <label htmlFor="login-email">Email:</label>
           <input
             type="email"
+            placeholder="Correo electrónico"
             id="login-email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -71,6 +74,7 @@ const Login: React.FC = () => {
           <label htmlFor="login-password">Contraseña:</label>
           <input
             type="password"
+            placeholder="Contraseña"
             id="login-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

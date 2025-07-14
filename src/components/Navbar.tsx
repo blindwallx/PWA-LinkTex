@@ -59,7 +59,7 @@ const Navbar: React.FC<NavbarProps> = ({ userRole }) => { // Acepta userRole
         <div className="navbar-brand">
           {/* Reemplazamos el texto "LinkTex" por la imagen del logo */}
           <NavLink to="/">
-            <img src={logo} alt="LinkTex Logo" className="navbar-logo" />
+            <img src={logo} alt="LinkTex Logo" className="bar-logo" />
           </NavLink>
         </div>
         <button className="hamburger-menu" onClick={toggleMenu}>

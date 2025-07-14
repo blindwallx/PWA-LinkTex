@@ -32,11 +32,13 @@
 }
 
 /* NUEVOS ESTILOS PARA EL LOGO */
-.navbar-logo {
+.bar-logo {
   height: 170px; /* Ajusta esto al tamaño deseado para tu logo */
   width: auto; /* Mantener la proporción */
-  vertical-align: middle; /* Para alinear con otros elementos si los hubiera */
   position: absolute;
+  top: 50%; /* Centrar verticalmente */
+  left: 30px; /* O el margen deseado desde la izquierda */
+  transform: translateY(-50%); /* Ajuste fino para centrado vertical real */
 }
 
 
@@ -138,11 +140,13 @@
 
   }
 
-  .navbar-logo {
+  .bar-logo {
   height: 120px; /* Ajusta esto al tamaño deseado para tu logo */
   width: auto; /* Mantener la proporción */
-  vertical-align: middle; /* Para alinear con otros elementos si los hubiera */
   position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
 }
 
   .navbar-left {
@@ -161,7 +165,7 @@
     width: 100%;
     background-color: rgb(57, 57, 110); 
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    transform: translateY(-120%);
+    transform: translateY(-160%);
     opacity: 0;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
   }
@@ -192,7 +196,6 @@
     text-align: left;
     /* Remover flex en móvil para que el botón ocupe todo el ancho */
     display: flex; /* Mantenemos flex para alinear icono/texto */
-    justify-content: flex-start; /* Alinear a la izquierda */
     align-items: center;
   }
   /* Estilos para el enlace activo en móvil */

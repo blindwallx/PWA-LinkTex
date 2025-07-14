@@ -3,66 +3,268 @@
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Cambiado de 'center' a 'flex-start' si main-content ya lo centra arriba */
-  /* min-height: 100vh;  <-- ELIMINA O COMENTA ESTA LÍNEA */
-  width: 100%; /* Asegúrate de que ocupe el ancho completo dentro del MainLayout */
-  background-color: #e9ebee;
-  color: #333;
+  align-items: center; /* Centra los elementos internos horizontalmente por defecto */
+  justify-content: flex-start; /* Alinea los elementos al inicio del contenedor */
+  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+  background-color: #e9ebee; /* Un fondo gris claro para el dashboard */
+  color: #333; /* Color de texto oscuro por defecto */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 20px;
+  padding: 30px 20px; /* Relleno superior/inferior y lateral */
+  box-sizing: border-box; /* Incluye padding y borde en el ancho/alto */
+  position: relative; /* Necesario para posicionar elementos absolutamente si se requiere */
+  min-height: calc(100vh - 60px); /* Ajusta si tu navbar tiene una altura fija */
+}
+
+/* --- NUEVOS ESTILOS PARA LA CABECERA DE INFORMACIÓN (ROL/EMPRESA) --- */
+.dashboard-header-info-wrapper {
+  width: 100%; /* Ocupa todo el ancho del contenedor */
+  display: flex;
+  justify-content: space-between; /* Empuja el rol a la izquierda y la info de empresa a la derecha */
+  align-items: flex-start; /* Alinea los elementos en la parte superior */
+  margin-bottom: 40px; /* Espacio entre esta sección y el título principal del dashboard */
+  padding: 0 10px; /* Pequeño padding horizontal interno */
   box-sizing: border-box;
+}
+
+.user-role-display {
+  font-size: 1.15em;
+  color: #4a69bd; /* Un azul más destacado para el rol */
+  font-weight: bold;
+  margin: 0; /* Elimina márgenes predeterminados del párrafo */
+  text-align: left;
+}
+
+/* Estilo para el rol cuando no es admin (aparece centrado si no hay companyId/name a la derecha) */
+.user-role-display-non-admin {
+  font-size: 1.15em;
+  color: #4a69bd;
+  font-weight: bold;
+  margin-bottom: 30px; /* Espacio debajo si está solo */
   text-align: center;
+  width: 100%; /* Asegura que ocupe el ancho para poder centrarse */
 }
 
-.dashboard-container h2 {
-  color: #2c3e50; /* Un azul oscuro para el título */
+.company-info-display {
+  text-align: right; /* Alinea el texto a la derecha dentro de este contenedor */
+  font-size: 1.05em;
+  color: #666; /* Un gris un poco más claro para la info de empresa */
+  font-weight: bold;
+}
+
+.company-info-display #copy-id{
+  background-color: rgba(57, 57, 110, 0.6);
+  color: white;
+  padding: 5px;
+  border-radius: 8px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  font-size: 0.8em;
+}
+
+.company-info-display p {
+  margin: 0; /* Elimina márgenes extra entre párrafos de información de empresa */
+  line-height: 1.5; /* Espaciado entre líneas */
+  display: flex; /* Para alinear el texto del ID y el botón de copiar */
+  align-items: center; /* Alinea verticalmente el texto y el botón */
+  justify-content: flex-end; /* Alinea los elementos (ID + botón) a la derecha */
+  gap: 6px; /* Espacio entre el texto fuerte y el botón de copiar */
+}
+
+/* Reutilizamos los estilos del botón de copiar del Navbar/Register */
+.copy-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #007bff; /* Color azul para el icono */
+  vertical-align: middle;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9em; /* Ajusta el tamaño del icono para que no sea muy grande aquí */
+  transition: color 0.2s ease;
+}
+
+.copy-button:hover {
+  color: #0056b3; /* Azul más oscuro al pasar el ratón */
+}
+
+.copy-button:focus {
+  outline: none; /* Elimina el contorno de enfoque predeterminado */
+}
+
+/* --- FIN NUEVOS ESTILOS DE CABECERA --- */
+
+.dashboard-title {
+  color: #2c3e50; /* Un azul oscuro para el título principal */
   margin-bottom: 20px;
-  font-size: 2.5em;
+  font-size: 2.8em; /* Título más grande */
   font-weight: 700;
+  text-align: center;
+  width: 100%; /* Asegura que el título ocupe el ancho completo para centrarse */
 }
 
-.dashboard-container p {
+.dashboard-description {
   color: #555; /* Un gris medio para el texto de párrafo */
   font-size: 1.1em;
   line-height: 1.6;
-  max-width: 600px;
+  max-width: 700px; /* Ancho máximo para la legibilidad */
   margin-bottom: 30px;
+  text-align: center;
+  padding: 0 10px; /* Pequeño padding para asegurar que el texto no toque los bordes en móvil */
 }
 
-.logout-button {
-  padding: 12px 25px;
-  background-color: #e74c3c; /* Rojo más vibrante para cerrar sesión */
-  color: white;
-  border: none;
-  border-radius: 5px;
+/* Estilos para las secciones de panel de administrador y operario */
+.admin-dashboard-section,
+.operario-dashboard-section {
+  width: 90%; /* Ocupa la mayor parte del ancho */
+  max-width: 800px; /* Ancho máximo para pantallas grandes */
+  background-color: #ffffff; /* Fondo blanco para las secciones de contenido */
+  padding: 30px;
+  border-radius: 10px; /* Bordes más redondeados */
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+  margin-top: 30px; /* Espacio superior para separarlo de la descripción */
+  text-align: left; /* Alinea el texto dentro de estas secciones a la izquierda */
+}
+
+.admin-dashboard-section h3,
+.operario-dashboard-section h3 {
+  color: #34495e; /* Un azul grisáceo para los subtítulos */
+  margin-bottom: 18px;
+  font-size: 2em; /* Subtítulos más grandes */
+  border-bottom: 2px solid #e0e0e0; /* Línea de separación sutil */
+  padding-bottom: 10px;
+}
+
+.admin-dashboard-section p,
+.operario-dashboard-section p {
+  color: #555;
+  font-size: 1.05em;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.admin-dashboard-section ul,
+.operario-dashboard-section ul {
+  list-style-type: none; /* Quita los puntos de lista predeterminados */
+  padding: 0;
+  margin: 0;
+  color: #555;
+}
+
+.admin-dashboard-section li,
+.operario-dashboard-section li {
+  margin-bottom: 10px;
   font-size: 1.1em;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave para un efecto 3D */
+  padding-left: 25px; /* Espacio para el icono personalizado */
+  position: relative;
 }
 
-.logout-button:hover {
-  background-color: #c0392b; /* Rojo más oscuro al pasar el mouse */
-  transform: translateY(-2px);
+.admin-dashboard-section li::before,
+.operario-dashboard-section li::before {
+  content: '✔'; /* Un checkmark como viñeta */
+  color: #28a745; /* Color verde para el checkmark */
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
-/* Media Queries para responsividad del Dashboard */
-@media (max-width: 600px) {
+/* --- Estilos para el mensaje de feedback de copia --- */
+.copy-feedback-message {
+  position: fixed; /* O fixed si quieres que flote */
+  top: 50%; /* Centra verticalmente */
+  left: 50%; /* Centra horizontalmente */
+  transform: translate(-50%, -50%); /* Ajusta para un centrado perfecto */
+  background-color: #4CAF50; /* Verde para éxito */
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+  font-size: 1.1em;
+  opacity: 0; /* Inicialmente oculto */
+  animation: fadeInOut 2s forwards; /* Animación para aparecer y desaparecer */
+  text-align: center;
+  pointer-events: none; /* Permite clics a través del mensaje una vez visible */
+}
+
+/* Animación para el mensaje de feedback */
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, -60%); } /* Inicia un poco más arriba */
+  10% { opacity: 1; transform: translate(-50%, -50%); } /* Aparece y se centra */
+  90% { opacity: 1; transform: translate(-50%, -50%); }
+  100% { opacity: 0; transform: translate(-50%, -40%); } /* Desaparece bajando un poco */
+}
+
+/* Si quieres un estilo diferente para mensajes de error (opcional, para usar con una clase 'error') */
+/*
+.copy-feedback-message.error {
+  background-color: #e74c3c;
+}
+*/
+
+/* --- Media Queries para responsividad del Dashboard --- */
+@media (max-width: 768px) {
   .dashboard-container {
-    padding: 15px;
+    padding: 20px 15px; /* Ajuste de padding para pantallas medianas/pequeñas */
   }
 
-  .dashboard-container h2 {
+  .dashboard-title {
+    font-size: 2.2em;
+  }
+
+  .dashboard-description {
+    font-size: 1em;
+    margin-bottom: 25px;
+  }
+
+  .dashboard-header-info-wrapper {
+    flex-direction: column; /* Apila el rol y la info de empresa en móvil */
+    align-items: flex-start; /* Alinea todo a la izquierda en móvil */
+    margin-bottom: 30px;
+    gap: 15px; /* Espacio entre el rol y la info de empresa apilados */
+  }
+
+  .company-info-display {
+    text-align: left; /* Alinea la info de empresa a la izquierda en móvil */
+    width: 100%; /* Ocupa todo el ancho en móvil */
+  }
+
+  .company-info-display p {
+    justify-content: flex-start; /* Alinea el ID/botón a la izquierda en móvil */
+  }
+
+  .admin-dashboard-section,
+  .operario-dashboard-section {
+    padding: 25px;
+    width: 98%; /* Más ancho en móvil */
+  }
+
+  .admin-dashboard-section h3,
+  .operario-dashboard-section h3 {
+    font-size: 1.6em;
+  }
+
+  .admin-dashboard-section li,
+  .operario-dashboard-section li {
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-title {
     font-size: 1.8em;
   }
 
-  .dashboard-container p {
-    font-size: 1em;
+  .admin-dashboard-section,
+  .operario-dashboard-section {
+    padding: 20px;
   }
 
-  .logout-button {
-    padding: 10px 20px;
-    font-size: 1em;
+  .admin-dashboard-section h3,
+  .operario-dashboard-section h3 {
+    font-size: 1.4em;
   }
+
+  
 }
