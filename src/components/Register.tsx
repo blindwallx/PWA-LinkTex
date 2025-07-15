@@ -2,7 +2,7 @@
 import React, { useState, type FormEvent } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebaseConfig';
-import { doc, setDoc, collection, addDoc } from 'firebase/firestore';
+import { doc, setDoc, collection, addDoc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore'; // Importa getDoc, updateDoc, arrayUnion
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/ltcadena2.png';
 import { FaCopy } from 'react-icons/fa';
@@ -22,12 +22,24 @@ function isFirebaseAuthError(error: unknown): error is { code: string; message: 
 const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [companyName, setCompanyName] = useState('');
+  const [companyName, setCompanyName] = useState(''); // Para registro de admin
+  const [joinCompanyId, setJoinCompanyId] = useState(''); // Para registro de operario
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [assignedCompanyId, setAssignedCompanyId] = useState<string | null>(null);
+  const [assignedCompanyName, setAssignedCompanyName] = useState<string | null>(null); // Para mostrar el nombre de la empresa al operario
+  const [userRoleOnSuccess, setUserRoleOnSuccess] = useState<string | null>(null); // Para mostrar el rol en el mensaje de éxito
+  const [registrationType, setRegistrationType] = useState<'admin' | 'operario'>('admin'); // Nuevo estado para el tipo de registro
+
   const navigate = useNavigate();
+
+  // Función para mostrar feedback de copia (reutilizada del Dashboard)
+  const showCopyFeedback = (message: string) => {
+    // Aquí puedes implementar una lógica de mensaje similar a la del Dashboard
+    // Por simplicidad, usaremos alert por ahora, pero se recomienda un modal personalizado
+    alert(message);
+  };
 
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
@@ -35,58 +47,97 @@ const Register: React.FC = () => {
     setLoading(true);
     setRegistrationSuccess(false);
 
-    if (!companyName.trim()) {
-      setError("Por favor, introduce un nombre para tu empresa.");
-      setLoading(false);
-      return;
-    }
-
     try {
-      console.log("Paso 1: Intentando crear usuario con Firebase Authentication...");
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      console.log("Paso 1 completado: Usuario de Auth creado. UID:", user.uid);
+      // Lógica de registro para ADMINISTRADOR (crear nueva empresa)
+      if (registrationType === 'admin') {
+        if (!companyName.trim()) {
+          setError("Por favor, introduce un nombre para tu empresa.");
+          setLoading(false);
+          return;
+        }
 
-      console.log("Paso 2: Intentando crear documento en la colección 'companies'...");
-      const companiesCollectionRef = collection(db, "companies");
-      const newCompanyDocRef = await addDoc(companiesCollectionRef, {
-        name: companyName,
-        createdAt: new Date(),
-        adminUsers: [user.uid]
-      });
-      const companyId = newCompanyDocRef.id;
-      console.log("Paso 2 completado: Documento de empresa creado. ID de empresa:", companyId);
+        console.log("Paso 1 (Admin): Intentando crear usuario con Firebase Authentication...");
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log("Paso 1 (Admin) completado: Usuario de Auth creado. UID:", user.uid);
 
-      console.log("Paso 3: Intentando crear documento del usuario en la colección 'users' para UID:", user.uid);
-      try {
+        console.log("Paso 2 (Admin): Intentando crear documento en la colección 'companies'...");
+        const companiesCollectionRef = collection(db, "companies");
+        const newCompanyDocRef = await addDoc(companiesCollectionRef, {
+          name: companyName,
+          createdAt: new Date(),
+          adminUsers: [user.uid], // El primer admin
+          operarioUsers: [] // Inicializar array de operarios
+        });
+        const companyId = newCompanyDocRef.id;
+        console.log("Paso 2 (Admin) completado: Documento de empresa creado. ID de empresa:", companyId);
+
+        console.log("Paso 3 (Admin): Intentando crear documento del usuario en la colección 'users' para UID:", user.uid);
         await setDoc(doc(db, "users", user.uid), {
           email: user.email,
           role: "admin",
           companyId: companyId,
           createdAt: new Date(),
         });
-        console.log("Paso 3 completado: Documento de usuario creado exitosamente en Firestore.");
-      } catch (setDocError: unknown) {
-        // Este catch está específicamente para el setDoc del usuario
-        console.error("ERROR EN EL PASO 3: Falló la creación del documento de usuario en Firestore.", setDocError);
-        if (setDocError instanceof Error) {
-          setError('Error al guardar el perfil del usuario: ' + setDocError.message + '. Verifica las reglas de Firestore.');
-        } else {
-          setError('Error desconocido al guardar el perfil del usuario.');
-        }
-        // Opcional: podrías considerar borrar el usuario de Auth si falla aquí para no dejar datos "huérfanos"
-        // await auth.currentUser?.delete();
-        // auth.signOut(); // También desloguear si no se pudo crear el perfil
-        setLoading(false); // Asegúrate de que loading se desactive aquí también
-        return; // Detener la ejecución si falla este paso crítico
-      }
+        console.log("Paso 3 (Admin) completado: Documento de usuario creado exitosamente en Firestore.");
 
-      setAssignedCompanyId(companyId);
-      setRegistrationSuccess(true);
-      console.log('Registro completo: Usuario, empresa y rol asignado como admin.');
-      // No redirigir de inmediato, mostrar el ID de la empresa
+        setAssignedCompanyId(companyId);
+        setAssignedCompanyName(companyName);
+        setUserRoleOnSuccess('admin');
+        setRegistrationSuccess(true);
+        console.log('Registro completo (Admin): Usuario, empresa y rol asignado como admin.');
+
+      } else { // Lógica de registro para OPERARIO (unirse a empresa existente)
+        if (!joinCompanyId.trim()) {
+          setError("Por favor, introduce el ID de la empresa a la que deseas unirte.");
+          setLoading(false);
+          return;
+        }
+
+        // CAMBIO CLAVE AQUÍ: Crear usuario ANTES de verificar el Company ID
+        console.log("Paso 1 (Operario): Intentando crear usuario con Firebase Authentication...");
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log("Paso 1 (Operario) completado: Usuario de Auth creado. UID:", user.uid);
+
+        console.log("Paso 2 (Operario): Verificando Company ID...");
+        const companyDocRef = doc(db, "companies", joinCompanyId);
+        const companyDocSnap = await getDoc(companyDocRef);
+
+        if (!companyDocSnap.exists()) {
+          // Si la empresa no existe, debemos revertir la creación del usuario de Auth
+          console.error("El ID de empresa proporcionado no existe. Eliminando usuario de Auth...");
+          await user.delete(); // Eliminar el usuario de Auth
+          setError("El ID de empresa proporcionado no existe.");
+          setLoading(false);
+          return;
+        }
+        const companyData = companyDocSnap.data();
+        const existingCompanyName = companyData?.name;
+        console.log("Paso 2 (Operario) completado: Company ID verificado. Nombre de empresa:", existingCompanyName);
+
+        console.log("Paso 3 (Operario): Actualizando documento de la empresa para añadir operario...");
+        await updateDoc(companyDocRef, {
+          operarioUsers: arrayUnion(user.uid) // Añadir el UID del operario al array de operarios
+        });
+        console.log("Paso 3 (Operario) completado: Documento de empresa actualizado.");
+
+        console.log("Paso 4 (Operario): Intentando crear documento del usuario en la colección 'users' para UID:", user.uid);
+        await setDoc(doc(db, "users", user.uid), {
+          email: user.email,
+          role: "operario",
+          companyId: joinCompanyId,
+          createdAt: new Date(),
+        });
+        console.log("Paso 4 (Operario) completado: Documento de usuario creado exitosamente en Firestore.");
+
+        setAssignedCompanyId(joinCompanyId);
+        setAssignedCompanyName(existingCompanyName);
+        setUserRoleOnSuccess('operario');
+        setRegistrationSuccess(true);
+        console.log('Registro completo (Operario): Usuario, empresa asignada y rol asignado como operario.');
+      }
     } catch (err: unknown) {
-      // Este catch es para errores de autenticación o de creación de la empresa
       if (isFirebaseAuthError(err)) {
         if (err.code === 'auth/email-already-in-use') {
           setError('El correo electrónico ya está en uso. Por favor, inicia sesión o usa otro correo.');
@@ -108,79 +159,145 @@ const Register: React.FC = () => {
     }
   };
 
-
-if (registrationSuccess) {
-  return (
-    <div className="register-container success-message">
-      <img src={logo} className="myLogo" />
-      <h2>¡Registro Exitoso!</h2>
-      <p>Tu cuenta ha sido creada como administrador de una nueva empresa.</p>
-      <p>
-        El ID de tu empresa es: <strong>{assignedCompanyId}</strong>
-        <button
-          onClick={() => {
-            // **IMPORTANTE: Verificar si assignedCompanyId no es null antes de copiar**
-            if (assignedCompanyId) {
-              navigator.clipboard.writeText(assignedCompanyId);
-              alert("¡ID de empresa copiado!"); // Opcional: para feedback al usuario
-            } else {
-              // Manejar el caso en que assignedCompanyId sea null (aunque no debería pasar aquí si el registro fue exitoso)
-              alert("No se pudo copiar el ID de la empresa.");
-            }
-          }}
-          className="copy-button"
-          aria-label="Copiar ID de empresa"
-        >
-          <FaCopy /> {/* Icono de copiar de React Icons */}
+  if (registrationSuccess) {
+    return (
+      <div className="register-container success-message">
+        <img src={logo} className="myLogo" alt="LinkTex Logo" />
+        <h2>¡Registro Exitoso!</h2>
+        {userRoleOnSuccess === 'admin' ? (
+          <>
+            <p>Tu cuenta ha sido creada como administrador de una nueva empresa.</p>
+            <p>
+              El ID de tu empresa es: <strong>{assignedCompanyId}</strong>
+              <button
+                onClick={() => {
+                  if (assignedCompanyId) {
+                    // Usar document.execCommand para mayor compatibilidad en iframes
+                    const tempInput = document.createElement('textarea');
+                    tempInput.value = assignedCompanyId;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    tempInput.setSelectionRange(0, 99999); // Para móviles
+                    try {
+                      document.execCommand('copy');
+                      showCopyFeedback("¡ID de empresa copiado!");
+                    } catch (err) {
+                      console.error('Error al copiar con execCommand:', err);
+                      // Fallback a navigator.clipboard si execCommand falla
+                      navigator.clipboard.writeText(assignedCompanyId)
+                        .then(() => showCopyFeedback("¡ID de empresa copiado!"))
+                        .catch(e => {
+                          console.error('Error al copiar con navigator.clipboard:', e);
+                          showCopyFeedback("Error al copiar. Intenta copiar manualmente.");
+                        });
+                    } finally {
+                      document.body.removeChild(tempInput);
+                    }
+                  } else {
+                    showCopyFeedback("No se pudo copiar el ID de la empresa.");
+                  }
+                }}
+                className="copy-button"
+                aria-label="Copiar ID de empresa"
+                title="Copiar ID de empresa"
+              >
+                <FaCopy /> {/* Icono de copiar de React Icons */}
+              </button>
+            </p>
+            <p>Guarda este ID, lo necesitarás si en el futuro necesitas añadir operarios o referenciar tu empresa.</p>
+          </>
+        ) : (
+          <>
+            <p>Tu cuenta ha sido creada como operario.</p>
+            <p>Te has unido a la empresa: <strong>{assignedCompanyName}</strong></p>
+            <p>El ID de la empresa es: <strong>{assignedCompanyId}</strong></p>
+            <p>Ya puedes iniciar sesión con tus credenciales.</p>
+          </>
+        )}
+        <button onClick={() => navigate('/dashboard')} className="go-to-dashboard-button">
+          Ir al Dashboard
         </button>
-      </p>
-      <p>Guarda este ID, lo necesitarás si en el futuro necesitas añadir operarios o referenciar tu empresa.</p>
-      <button onClick={() => navigate('/dashboard')} className="go-to-dashboard-button">
-        Ir al Dashboard
-      </button>
-      <p className="login-link">
-        ¿Ya tienes una cuenta? <Link to="/login">Inicia Sesión aquí</Link>
-      </p>
-    </div>
-  );
-}
+        <p className="login-link">
+          ¿Ya tienes una cuenta? <Link to="/login">Inicia Sesión aquí</Link>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="register-container">
-      <img src={logo} className="myLogo" />
-      <h2 translate='no'>Registro Empresa</h2>
+      <img src={logo} className="myLogo" alt="LinkTex Logo" />
+      <h2 translate='no'>Registro</h2>
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleRegister} className="register-form">
-        
-        <label htmlFor="company-register">Nombre Empresa:</label>
-        <input
-          type="text"
-          placeholder="Nombre de tu Empresa (ej. LinkTex S.A.)"
-          id='company-register'
-          value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
-          required
-        />
+        {/* Selección de tipo de registro */}
+        <div className="registration-type-selection">
+          <label className="radio-label">
+            <input
+              type="radio"
+              value="admin"
+              checked={registrationType === 'admin'}
+              onChange={() => setRegistrationType('admin')}
+            />
+            Registrar nueva empresa (Administrador)
+          </label>
+          <label className="radio-label">
+            <input
+              type="radio"
+              value="operario"
+              checked={registrationType === 'operario'}
+              onChange={() => setRegistrationType('operario')}
+            />
+            Unirse a empresa existente (Operario)
+          </label>
+        </div>
+
+        {registrationType === 'admin' ? (
+          <>
+            <label htmlFor="company-register">Nombre Empresa:</label>
+            <input
+              type="text"
+              placeholder="Nombre de tu Empresa (ej. LinkTex S.A.)"
+              id='company-register'
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              required
+            />
+          </>
+        ) : (
+          <>
+            <label htmlFor="join-company-id">ID de Empresa:</label>
+            <input
+              type="text"
+              placeholder="ID de la empresa a la que te unes"
+              id='join-company-id'
+              value={joinCompanyId}
+              onChange={(e) => setJoinCompanyId(e.target.value)}
+              required
+            />
+          </>
+        )}
 
         <label htmlFor="register-email">Email:</label>
         <input
           type="email"
-          placeholder="Correo electrónico del Administrador"
+          placeholder="Correo electrónico"
           id='register-email'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
 
-        <label htmlFor="register-password">Password:</label>
+        <label htmlFor="register-password">Contraseña:</label>
         <input
           type="password"
           placeholder="Contraseña (mínimo 6 caracteres)"
+          id='register-password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit" disabled={loading} translate='no'>
+        <button type="submit" disabled={loading}>
           {loading ? 'Registrando...' : 'Registrar'}
         </button>
       </form>

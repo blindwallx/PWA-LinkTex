@@ -90,7 +90,7 @@ const Dashboard: React.FC = () => {
                     Empresa: <strong>{companyName}</strong>
                   </p>
                 )}
-                {companyId && (
+                {companyId && ( // Solo muestra el ID de empresa y el botón de copiar si es admin
                   <p>
                     ID Empresa: <strong id='copy-id'>{companyId}</strong>
                     <button
@@ -109,9 +109,18 @@ const Dashboard: React.FC = () => {
           </>
         ) : (
           userRole && (
-            <p className="user-role-display-non-admin">
-              Tu rol actual es: <strong>{userRole}</strong>
-            </p>
+            <>
+              <p className="user-role-display-non-admin">
+                Tu rol actual es: <strong>{userRole}</strong>
+              </p>
+              {companyName && ( // Para operarios, solo mostrar el nombre de la empresa
+                <div className="company-info-display">
+                  <p>
+                    Empresa: <strong>{companyName}</strong>
+                  </p>
+                </div>
+              )}
+            </>
           )
         )}
       </div>

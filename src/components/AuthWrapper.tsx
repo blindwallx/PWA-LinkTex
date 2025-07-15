@@ -59,12 +59,6 @@ const AuthWrapper: React.FC = () => {
             setLoading(false); // Detener el spinner, el perfil está listo
             console.log("Documento de usuario encontrado inmediatamente.");
 
-            // Si estábamos en /register, podríamos redirigir si el registro finalizó
-            // Aunque Register.tsx ya hace su propia redirección al final
-            // if (location.pathname === '/register') {
-            //   navigate('/dashboard', { replace: true });
-            // }
-
           } else {
             // Perfil NO encontrado: Esto ocurre en dos escenarios:
             // 1. Justo después del registro, antes de que Register.tsx escriba el documento (temporal).

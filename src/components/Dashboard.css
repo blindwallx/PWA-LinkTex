@@ -197,11 +197,11 @@
 }
 
 /* Si quieres un estilo diferente para mensajes de error (opcional, para usar con una clase 'error') */
-/*
+
 .copy-feedback-message.error {
   background-color: #e74c3c;
 }
-*/
+
 
 /* --- Media Queries para responsividad del Dashboard --- */
 @media (max-width: 768px) {

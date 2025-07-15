@@ -20,18 +20,20 @@ const MainLayout: React.FC<MainLayoutProps> = ({ userRole, companyId }) => {
     const fetchCompanyName = async () => {
       if (companyId) {
         try {
-          const companyDocRef = doc(db, 'Empresas', companyId); // Usar 'Empresas' (mayúscula)
+          // CAMBIO AQUÍ: Usar 'companies' (minúscula) para coincidir con Register.tsx
+          const companyDocRef = doc(db, 'companies', companyId);
           const companySnap = await getDoc(companyDocRef);
 
           if (companySnap.exists()) {
             const data = companySnap.data();
-            setCompanyName(data.nombre || null); // Usar 'nombre' (minúscula)
-            console.log("Nombre de empresa cargado:", data.nombre);
+            // CAMBIO AQUÍ: Usar 'name' (minúscula) para coincidir con Register.tsx
+            setCompanyName(data.name || null);
+            console.log("Nombre de empresa cargado:", data.name);
           } else {
             console.log("No se encontró el documento de la empresa para el ID:", companyId);
             setCompanyName(null);
           }
-        } catch (error: unknown) { // CAMBIO AQUÍ: 'any' a 'unknown'
+        } catch (error: unknown) {
           if (error instanceof Error) {
             console.error("Error al obtener el nombre de la empresa:", error.message);
           } else {
