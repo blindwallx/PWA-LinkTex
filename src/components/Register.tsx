@@ -2,7 +2,7 @@
 import React, { useState, type FormEvent } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebaseConfig';
-import { doc, setDoc, collection, addDoc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore'; // Importa getDoc, updateDoc, arrayUnion
+import { doc, setDoc, collection, addDoc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/ltcadena2.png';
 import { FaCopy } from 'react-icons/fa';
@@ -24,6 +24,11 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState('');
   const [companyName, setCompanyName] = useState(''); // Para registro de admin
   const [joinCompanyId, setJoinCompanyId] = useState(''); // Para registro de operario
+  // NUEVOS ESTADOS PARA NOMBRE, APELLIDO, TELÉFONO
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
@@ -36,9 +41,7 @@ const Register: React.FC = () => {
 
   // Función para mostrar feedback de copia (reutilizada del Dashboard)
   const showCopyFeedback = (message: string) => {
-    // Aquí puedes implementar una lógica de mensaje similar a la del Dashboard
-    // Por simplicidad, usaremos alert por ahora, pero se recomienda un modal personalizado
-    alert(message);
+    alert(message); // Por simplicidad, usamos alert. Se recomienda un modal personalizado.
   };
 
   const handleRegister = async (e: FormEvent) => {
@@ -46,6 +49,25 @@ const Register: React.FC = () => {
     setError(null);
     setLoading(true);
     setRegistrationSuccess(false);
+
+    // Validaciones básicas para los nuevos campos
+    if (!firstName.trim()) {
+      setError("Por favor, introduce tu nombre.");
+      setLoading(false);
+      return;
+    }
+    if (!lastName.trim()) {
+      setError("Por favor, introduce tu apellido.");
+      setLoading(false);
+      return;
+    }
+    // El teléfono podría ser opcional o con validación más compleja si se requiere
+    // if (!phoneNumber.trim()) {
+    //   setError("Por favor, introduce tu número de teléfono.");
+    //   setLoading(false);
+    //   return;
+    // }
+
 
     try {
       // Lógica de registro para ADMINISTRADOR (crear nueva empresa)
@@ -78,6 +100,10 @@ const Register: React.FC = () => {
           role: "admin",
           companyId: companyId,
           createdAt: new Date(),
+          // NUEVOS CAMPOS A GUARDAR EN FIRESTORE
+          firstName: firstName,
+          lastName: lastName,
+          phoneNumber: phoneNumber,
         });
         console.log("Paso 3 (Admin) completado: Documento de usuario creado exitosamente en Firestore.");
 
@@ -94,7 +120,6 @@ const Register: React.FC = () => {
           return;
         }
 
-        // CAMBIO CLAVE AQUÍ: Crear usuario ANTES de verificar el Company ID
         console.log("Paso 1 (Operario): Intentando crear usuario con Firebase Authentication...");
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -105,7 +130,6 @@ const Register: React.FC = () => {
         const companyDocSnap = await getDoc(companyDocRef);
 
         if (!companyDocSnap.exists()) {
-          // Si la empresa no existe, debemos revertir la creación del usuario de Auth
           console.error("El ID de empresa proporcionado no existe. Eliminando usuario de Auth...");
           await user.delete(); // Eliminar el usuario de Auth
           setError("El ID de empresa proporcionado no existe.");
@@ -128,6 +152,10 @@ const Register: React.FC = () => {
           role: "operario",
           companyId: joinCompanyId,
           createdAt: new Date(),
+          // NUEVOS CAMPOS A GUARDAR EN FIRESTORE
+          firstName: firstName,
+          lastName: lastName,
+          phoneNumber: phoneNumber,
         });
         console.log("Paso 4 (Operario) completado: Documento de usuario creado exitosamente en Firestore.");
 
@@ -172,18 +200,16 @@ const Register: React.FC = () => {
               <button
                 onClick={() => {
                   if (assignedCompanyId) {
-                    // Usar document.execCommand para mayor compatibilidad en iframes
                     const tempInput = document.createElement('textarea');
                     tempInput.value = assignedCompanyId;
                     document.body.appendChild(tempInput);
                     tempInput.select();
-                    tempInput.setSelectionRange(0, 99999); // Para móviles
+                    tempInput.setSelectionRange(0, 99999);
                     try {
                       document.execCommand('copy');
                       showCopyFeedback("¡ID de empresa copiado!");
                     } catch (err) {
                       console.error('Error al copiar con execCommand:', err);
-                      // Fallback a navigator.clipboard si execCommand falla
                       navigator.clipboard.writeText(assignedCompanyId)
                         .then(() => showCopyFeedback("¡ID de empresa copiado!"))
                         .catch(e => {
@@ -201,7 +227,7 @@ const Register: React.FC = () => {
                 aria-label="Copiar ID de empresa"
                 title="Copiar ID de empresa"
               >
-                <FaCopy /> {/* Icono de copiar de React Icons */}
+                <FaCopy />
               </button>
             </p>
             <p>Guarda este ID, lo necesitarás si en el futuro necesitas añadir operarios o referenciar tu empresa.</p>
@@ -251,6 +277,37 @@ const Register: React.FC = () => {
             Unirse a empresa existente (Operario)
           </label>
         </div>
+
+        {/* Campos Nombre, Apellido, Teléfono (comunes a ambos tipos de registro) */}
+        <label htmlFor="first-name">Nombre:</label>
+        <input
+          type="text"
+          placeholder="Tu nombre"
+          id='first-name'
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          required
+        />
+
+        <label htmlFor="last-name">Apellido:</label>
+        <input
+          type="text"
+          placeholder="Tu apellido"
+          id='last-name'
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          required
+        />
+
+        <label htmlFor="phone-number">Teléfono:</label>
+        <input
+          type="tel" // Usar type="tel" para teléfonos
+          placeholder="Tu número de teléfono"
+          id='phone-number'
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          required
+        />
 
         {registrationType === 'admin' ? (
           <>

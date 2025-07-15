@@ -4,19 +4,14 @@ import { auth } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
 import './Navbar.css';
 
-// Importa tu logo. Ajusta la ruta si es necesario.
-import logo from '../assets/ltcadena2.png'; // <-- ¡Asegúrate de que esta ruta sea correcta!
-
-// Importa el icono de React Icons. Puedes elegir el que más te guste,
-// por ejemplo, de la librería Fa (Font Awesome).
-// Si no tienes React Icons instalado, primero ejecuta: npm install react-icons
-import { FaSignOutAlt } from 'react-icons/fa'; // O MdLogout, IoLogOut, etc.
+import logo from '../assets/ltcadena2.png';
+import { FaSignOutAlt, FaUserAlt } from 'react-icons/fa'; // Importa FaUserAlt
 
 interface NavbarProps {
-  userRole: string | null; // Define la prop userRole
+  userRole: string | null;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ userRole }) => { // Acepta userRole
+const Navbar: React.FC<NavbarProps> = ({ userRole }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const navbarRef = useRef<HTMLElement>(null);
@@ -25,7 +20,7 @@ const Navbar: React.FC<NavbarProps> = ({ userRole }) => { // Acepta userRole
     try {
       await signOut(auth);
       console.log('Usuario ha cerrado sesión desde Navbar');
-      navigate('/login'); // Redirige al login después de cerrar sesión
+      navigate('/login');
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('Error al cerrar sesión desde Navbar:', error.message);
@@ -57,7 +52,6 @@ const Navbar: React.FC<NavbarProps> = ({ userRole }) => { // Acepta userRole
     <nav className="navbar" ref={navbarRef}>
       <div className="navbar-left">
         <div className="navbar-brand">
-          {/* Reemplazamos el texto "LinkTex" por la imagen del logo */}
           <NavLink to="/">
             <img src={logo} alt="LinkTex Logo" className="bar-logo" />
           </NavLink>
@@ -80,10 +74,16 @@ const Navbar: React.FC<NavbarProps> = ({ userRole }) => { // Acepta userRole
           </li>
         )}
 
+        {/* NUEVO ENLACE AL PERFIL */}
         <li className="nav-item">
-          {/* Reemplazamos el texto "Cerrar Sesión" por el icono */}
+          <NavLink to="/profile" className={({ isActive }) => isActive ? 'active' : ''} onClick={() => setIsOpen(false)} aria-label="Mi Perfil" title="Mi Perfil">
+            <FaUserAlt className="profile-icon" /> {/* Icono de perfil */}
+          </NavLink>
+        </li>
+
+        <li className="nav-item">
           <button onClick={handleLogout} className="nav-logout-button">
-            <FaSignOutAlt className="logout-icon" /> {/* Icono de Font Awesome */}
+            <FaSignOutAlt className="logout-icon" />
           </button>
         </li>
       </ul>

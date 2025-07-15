@@ -5,28 +5,31 @@ import Navbar from './Navbar';
 import './MainLayout.css';
 
 // Importa tus dependencias de Firebase Firestore
-import { db } from '../firebaseConfig'; // Asegúrate de que 'db' es tu instancia de Firestore
+import { db } from '../firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 
 interface MainLayoutProps {
   userRole: string | null;
   companyId: string | null;
+  // AÑADIR NUEVAS PROPS AL INTERFACE
+  firstName: string | null;
+  lastName: string | null;
+  phoneNumber: string | null;
+  email: string | null; // AÑADIR LA PROPIEDAD EMAIL AQUÍ
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ userRole, companyId }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ userRole, companyId, firstName, lastName, phoneNumber, email }) => {
   const [companyName, setCompanyName] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCompanyName = async () => {
       if (companyId) {
         try {
-          // CAMBIO AQUÍ: Usar 'companies' (minúscula) para coincidir con Register.tsx
           const companyDocRef = doc(db, 'companies', companyId);
           const companySnap = await getDoc(companyDocRef);
 
           if (companySnap.exists()) {
             const data = companySnap.data();
-            // CAMBIO AQUÍ: Usar 'name' (minúscula) para coincidir con Register.tsx
             setCompanyName(data.name || null);
             console.log("Nombre de empresa cargado:", data.name);
           } else {
@@ -53,7 +56,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ userRole, companyId }) => {
     <div className="main-layout">
       <Navbar userRole={userRole} />
       <main className="content">
-        <Outlet context={{ userRole, companyId, companyName }} />
+        {/* PASAR LOS NUEVOS DATOS AL CONTEXTO */}
+        <Outlet context={{ userRole, companyId, companyName, firstName, lastName, phoneNumber, email }} />
       </main>
     </div>
   );

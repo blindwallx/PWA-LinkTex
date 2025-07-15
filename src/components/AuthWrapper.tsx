@@ -10,6 +10,7 @@ import Dashboard from './Dashboard';
 import LoadingSpinner from './LoadingSpinner';
 import MainLayout from './MainLayout';
 import ProductManagement from './ProductManagement';
+import Profile from './Profile'; // Importa el nuevo componente Profile
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -32,44 +33,45 @@ const AuthWrapper: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [companyId, setCompanyId] = useState<string | null>(null);
-  const [globalError, setGlobalError] = useState<string | null>(null); // Se usará solo para ERRORES REALES
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [lastName, setLastName] = useState<string | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null); // Añadir estado para email
+
+  const [globalError, setGlobalError] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    let retryTimeout: NodeJS.Timeout | null = null; // Para limpiar el timeout
+    let retryTimeout: NodeJS.Timeout | null = null;
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
 
       if (user) {
-        // Al autenticar un usuario, siempre empezamos asumiendo que necesitamos cargar su perfil.
-        setLoading(true); // Mantener el spinner activo mientras verificamos el perfil
+        setLoading(true);
+        setEmail(user.email); // Establecer el email desde el objeto user de Firebase Auth
 
         try {
           const userDocRef = doc(db, "users", user.uid);
           const userDocSnap = await getDoc(userDocRef);
 
           if (userDocSnap.exists()) {
-            // Perfil encontrado: Cargar datos y limpiar errores si los hubiera.
             const userData = userDocSnap.data();
             setUserRole(userData.role as string);
             setCompanyId(userData.companyId as string);
-            setGlobalError(null); // Limpiar cualquier error previo
-            setLoading(false); // Detener el spinner, el perfil está listo
+            setFirstName(userData.firstName as string || null);
+            setLastName(userData.lastName as string || null);
+            setPhoneNumber(userData.phoneNumber as string || null);
+
+            setGlobalError(null);
+            setLoading(false);
             console.log("Documento de usuario encontrado inmediatamente.");
 
           } else {
-            // Perfil NO encontrado: Esto ocurre en dos escenarios:
-            // 1. Justo después del registro, antes de que Register.tsx escriba el documento (temporal).
-            // 2. Un usuario existente cuyo documento fue borrado o nunca se creó (error real).
-
             if (location.pathname === '/register') {
-              // Caso 1: Estamos en el flujo de registro. No mostramos error AÚN.
-              // En cambio, mantenemos el loading y esperamos un poco.
               console.log("Documento de usuario no encontrado inmediatamente, esperando creación...");
-              
-              // Limpiamos cualquier timeout previo para evitar múltiples ejecuciones
+
               if (retryTimeout) clearTimeout(retryTimeout);
 
               retryTimeout = setTimeout(async () => {
@@ -81,18 +83,23 @@ const AuthWrapper: React.FC = () => {
                     const userDataRetry = userDocSnapRetry.data();
                     setUserRole(userDataRetry.role as string);
                     setCompanyId(userDataRetry.companyId as string);
-                    setGlobalError(null); // ¡Éxito! Limpiamos el error
+                    setFirstName(userDataRetry.firstName as string || null);
+                    setLastName(userDataRetry.lastName as string || null);
+                    setPhoneNumber(userDataRetry.phoneNumber as string || null);
+
+                    setGlobalError(null);
                     console.log("Documento de usuario encontrado después del retraso.");
-                    setLoading(false); // Perfil listo
-                    // Si Register.tsx ya no navega, podrías añadir un navigate aquí:
-                    // navigate('/dashboard', { replace: true }); 
+                    setLoading(false);
                   } else {
-                    // Si incluso después del retraso no se encuentra, es un fallo en el registro.
                     setGlobalError("Error de registro: Perfil de usuario no se pudo completar. Por favor, contacta al soporte.");
                     setUserRole(null);
                     setCompanyId(null);
-                    auth.signOut(); // Cerrar sesión para evitar un estado inconsistente
-                    setLoading(false); // Detener el spinner, mostrar error
+                    setFirstName(null);
+                    setLastName(null);
+                    setPhoneNumber(null);
+                    setEmail(null); // Limpiar email
+                    auth.signOut();
+                    setLoading(false);
                     console.error("Documento de usuario no encontrado después del retraso. Cerrando sesión.");
                   }
                 } catch (retryErr: unknown) {
@@ -100,45 +107,57 @@ const AuthWrapper: React.FC = () => {
                   setGlobalError("Error al cargar el perfil. Inténtalo de nuevo o contacta al soporte.");
                   setUserRole(null);
                   setCompanyId(null);
+                  setFirstName(null);
+                  setLastName(null);
+                  setPhoneNumber(null);
+                  setEmail(null); // Limpiar email
                   auth.signOut();
-                  setLoading(false); // Detener el spinner, mostrar error
+                  setLoading(false);
                 }
-              }, 3000); // Espera 3 segundos (tiempo para que Register.tsx termine de escribir)
+              }, 3000);
 
             } else {
-              // Caso 2: No estamos en /register y el perfil no se encontró. Esto es un error real.
               setGlobalError("Documento de usuario no encontrado. Por favor, inicia sesión de nuevo o contacta al administrador.");
               setUserRole(null);
               setCompanyId(null);
-              auth.signOut(); // Forzar logout si el perfil no existe para un usuario "conocido"
-              setLoading(false); // Detener el spinner, mostrar error
+              setFirstName(null);
+              setLastName(null);
+              setPhoneNumber(null);
+              setEmail(null); // Limpiar email
+              auth.signOut();
+              setLoading(false);
               console.error("Documento de usuario no encontrado para un usuario que no está registrándose. Cerrando sesión.");
             }
           }
         } catch (err: unknown) {
-          // Un error general al intentar obtener el documento (ej. problemas de red, permisos inesperados)
           console.error("Error inesperado al obtener perfil de usuario:", err);
           setGlobalError("Error al cargar el perfil. Por favor, reinicia la aplicación o contacta al soporte.");
           setUserRole(null);
           setCompanyId(null);
+          setFirstName(null);
+          setLastName(null);
+          setPhoneNumber(null);
+          setEmail(null); // Limpiar email
           auth.signOut();
-          setLoading(false); // Detener el spinner, mostrar error
+          setLoading(false);
         }
       } else {
-        // No hay usuario autenticado (deslogueado o nunca logueado)
-        if (retryTimeout) clearTimeout(retryTimeout); // Limpiar timeout si el usuario se desloguea
+        if (retryTimeout) clearTimeout(retryTimeout);
         setCurrentUser(null);
         setUserRole(null);
         setCompanyId(null);
-        setGlobalError(null); // Limpiar cualquier error
-        setLoading(false); // No hay usuario, no hay carga de perfil, listo.
+        setFirstName(null);
+        setLastName(null);
+        setPhoneNumber(null);
+        setEmail(null); // Limpiar email
+        setGlobalError(null);
+        setLoading(false);
       }
     });
 
-    // Función de limpieza del useEffect
     return () => {
-      unsubscribe(); // Desuscribirse del listener de auth
-      if (retryTimeout) clearTimeout(retryTimeout); // Limpiar el timeout si el componente se desmonta
+      unsubscribe();
+      if (retryTimeout) clearTimeout(retryTimeout);
     };
   }, [location.pathname, navigate]);
 
@@ -153,13 +172,21 @@ const AuthWrapper: React.FC = () => {
           path="/"
           element={
             <ProtectedRoute user={currentUser} loading={loading}>
-              <MainLayout userRole={userRole} companyId={companyId} />
+              <MainLayout
+                userRole={userRole}
+                companyId={companyId}
+                firstName={firstName}
+                lastName={lastName}
+                phoneNumber={phoneNumber}
+                email={email} // Pasar email a MainLayout
+              />
             </ProtectedRoute>
           }
         >
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="product-management" element={<ProductManagement />} />
+          <Route path="profile" element={<Profile />} /> {/* NUEVA RUTA PARA EL PERFIL */}
         </Route>
 
         <Route path="*" element={loading ? <LoadingSpinner /> : <Navigate to="/login" />} />

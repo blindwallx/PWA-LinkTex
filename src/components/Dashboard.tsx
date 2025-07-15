@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Importa useState para el mensaje de confirmación
+import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import './Dashboard.css';
 import { FaCopy } from 'react-icons/fa';
@@ -7,42 +7,43 @@ interface OutletContextType {
   userRole: string | null;
   companyId: string | null;
   companyName: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  phoneNumber: string | null; // Aunque no se mostrará aquí, sigue siendo parte del contexto
 }
 
 const Dashboard: React.FC = () => {
-  const { userRole, companyId, companyName } = useOutletContext<OutletContextType>();
-  const [copyMessage, setCopyMessage] = useState<string | null>(null); // Nuevo estado para el mensaje
+  const { userRole, companyId, companyName, firstName, lastName} = useOutletContext<OutletContextType>();
+  const [copyMessage, setCopyMessage] = useState<string | null>(null);
 
   const showCopyFeedback = (message: string) => {
     setCopyMessage(message);
     setTimeout(() => {
-      setCopyMessage(null); // Ocultar el mensaje después de 2 segundos
+      setCopyMessage(null);
     }, 2000);
   };
 
   const handleCopyCompanyId = (event: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
-    event.preventDefault(); // Crucial para móviles
-    event.stopPropagation(); // Evita que el evento se propague a elementos padre
+    event.preventDefault();
+    event.stopPropagation();
 
     if (!companyId) {
       showCopyFeedback('No hay un ID de empresa para copiar.');
       return;
     }
 
-    // --- Estrategia de copia más robusta usando un textarea temporal ---
     const tempInput = document.createElement('textarea');
     tempInput.value = companyId;
-    document.body.appendChild(tempInput); // Añade el textarea al DOM
-    tempInput.select(); // Selecciona el texto dentro del textarea
-    tempInput.setSelectionRange(0, 99999); // Para móviles que no soportan select() tan bien
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    tempInput.setSelectionRange(0, 99999);
 
     let success = false;
     try {
-      success = document.execCommand('copy'); // Intenta copiar el texto seleccionado
+      success = document.execCommand('copy');
       if (success) {
         showCopyFeedback('¡ID de empresa copiado!');
       } else {
-        // Fallback si execCommand falla o no está disponible
         navigator.clipboard.writeText(companyId)
           .then(() => {
             showCopyFeedback('¡ID de empresa copiado!');
@@ -53,7 +54,6 @@ const Dashboard: React.FC = () => {
           });
       }
     } catch (err) {
-      // Fallback si execCommand falla (ej. en iOS para algunos elementos)
       console.error('Error al copiar con execCommand:', err);
       navigator.clipboard.writeText(companyId)
         .then(() => {
@@ -64,13 +64,12 @@ const Dashboard: React.FC = () => {
           showCopyFeedback('Error al copiar. Intenta copiar manualmente.');
         });
     } finally {
-      document.body.removeChild(tempInput); // Elimina el textarea del DOM
+      document.body.removeChild(tempInput);
     }
   };
 
   return (
     <div className="dashboard-container">
-      {/* Mensaje de confirmación/error */}
       {copyMessage && (
         <div className="copy-feedback-message">
           {copyMessage}
@@ -78,11 +77,14 @@ const Dashboard: React.FC = () => {
       )}
 
       <div className="dashboard-header-info-wrapper">
+        {/* Mostrar Nombre y Apellido junto al rol */}
+        {userRole && (
+          <p className="user-role-display">
+            {firstName && lastName ? `${firstName} ${lastName}` : 'Usuario'}: <strong>{userRole}</strong>
+          </p>
+        )}
         {userRole === 'admin' ? (
           <>
-            <p className="user-role-display">
-              Tu rol actual es: <strong>{userRole}</strong>
-            </p>
             {(companyId || companyName) && (
               <div className="company-info-display">
                 {companyName && (
@@ -90,12 +92,12 @@ const Dashboard: React.FC = () => {
                     Empresa: <strong>{companyName}</strong>
                   </p>
                 )}
-                {companyId && ( // Solo muestra el ID de empresa y el botón de copiar si es admin
+                {companyId && (
                   <p>
                     ID Empresa: <strong id='copy-id'>{companyId}</strong>
                     <button
                       onClick={handleCopyCompanyId}
-                      onTouchStart={handleCopyCompanyId} // Mantener onTouchStart
+                      onTouchStart={handleCopyCompanyId}
                       className="copy-button"
                       aria-label="Copiar ID de empresa"
                       title="Copiar ID de empresa"
@@ -109,23 +111,20 @@ const Dashboard: React.FC = () => {
           </>
         ) : (
           userRole && (
-            <>
-              <p className="user-role-display-non-admin">
-                Tu rol actual es: <strong>{userRole}</strong>
-              </p>
-              {companyName && ( // Para operarios, solo mostrar el nombre de la empresa
-                <div className="company-info-display">
-                  <p>
-                    Empresa: <strong>{companyName}</strong>
-                  </p>
-                </div>
-              )}
-            </>
+            // Para operarios, solo mostrar el nombre de la empresa
+            companyName && (
+              <div className="company-info-display">
+                <p>
+                  Empresa: <strong>{companyName}</strong>
+                </p>
+              </div>
+            )
           )
         )}
       </div>
 
       <h2 className="dashboard-title">¡Bienvenido al Dashboard de LinkTex!</h2>
+      {/* Eliminar la visualización del teléfono aquí */}
       <p className="dashboard-description">
         Esta es la página principal de tu aplicación después de iniciar sesión.
       </p>
