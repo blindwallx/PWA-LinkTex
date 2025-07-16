@@ -1,14 +1,14 @@
 .navbar {
-  background-color: rgb(57, 57, 110); 
+  background-color: rgb(57, 57, 110);
   color: white;
   padding: 15px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  position: fixed; 
+  position: fixed;
   top: 0;
-  left: 0; 
+  left: 0;
   z-index: 1000;
   width: 100%;
   box-sizing: border-box;
@@ -21,26 +21,21 @@
   width: auto;
 }
 
-.navbar-brand a { /* También aplica a NavLink */
-  color: white; /* Esto ya no es tan relevante porque ahora es una imagen */
-  text-decoration: none; /* Esto ya no es tan relevante porque ahora es una imagen */
-  /* font-size: 1.8em; Quita esto para que el tamaño lo controle la imagen */
-  font-weight: bold; /* Quita esto */
-  letter-spacing: 1px; /* Quita esto */
-  display: flex; /* Para centrar el logo si es necesario */
+.navbar-brand a {
+  color: white;
+  text-decoration: none;
+  display: flex;
   align-items: center;
 }
 
-/* NUEVOS ESTILOS PARA EL LOGO */
 .bar-logo {
-  height: 170px; /* Ajusta esto al tamaño deseado para tu logo */
-  width: auto; /* Mantener la proporción */
+  height: 170px;
+  width: auto;
   position: absolute;
-  top: 50%; /* Centrar verticalmente */
-  left: 30px; /* O el margen deseado desde la izquierda */
-  transform: translateY(-50%); /* Ajuste fino para centrado vertical real */
+  top: 50%;
+  left: 30px;
+  transform: translateY(-50%);
 }
-
 
 .navbar-nav {
   list-style: none;
@@ -53,33 +48,34 @@
 
 .nav-item {
   margin-left: 25px;
+  position: relative; /* Importante para el posicionamiento del dropdown */
 }
 
-.nav-item a { /* Estilos base para los NavLink */
+.nav-item a {
   color: white;
   text-decoration: none;
   font-size: 1.1em;
   padding: 5px 0;
-  transition: color 0.3s ease, border-bottom 0.3s ease; /* Añade transición para el borde */
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+  display: flex; /* Para alinear íconos con texto */
+  align-items: center;
+  gap: 8px; /* Espacio entre ícono y texto */
 }
 
 .nav-item a:hover {
-  color: #cceeff; /* Un tono más claro para el hover, manteniendo la armonía con el azul */
-  /* font-size: 1.2em; Si quieres que haga zoom, déjalo. Si no, quítalo. */
+  color: #cceeff;
 }
 
-/* ESTILOS PARA EL ENLACE ACTIVO */
 .nav-item a.active {
-  color: #ffffff; /* Color blanco para el elemento activo para que resalte sobre el fondo azul */
-  font-weight: bold; /* Negrita para destacarlo más */
-  border-bottom: 2px solid #ffffff; /* Una línea inferior blanca para subrayar */
-  padding-bottom: 2px; /* Espacio entre el texto y la línea */
-}
-/* Asegúrate de que el hover no anule el active */
-.nav-item a.active:hover {
-    color: #ffffff; /* Mantener el color activo al pasar el mouse */
+  color: #ffffff;
+  font-weight: bold;
+  border-bottom: 2px solid #ffffff;
+  padding-bottom: 2px;
 }
 
+.nav-item a.active:hover {
+  color: #ffffff;
+}
 
 .nav-logout-button {
   padding: 8px 15px;
@@ -91,24 +87,27 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-left: 25px;
-  display: flex; /* Para alinear el icono y el texto */
-  align-items: center; /* Para centrar verticalmente */
-  gap: 8px; /* Espacio entre el icono y el texto */
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .nav-logout-button:hover {
   background-color: #c0392b;
 }
 
-/* NUEVOS ESTILOS PARA EL ICONO DE LOGOUT */
 .logout-icon {
-  font-size: 1.3em; /* Ajusta el tamaño del icono */
-  vertical-align: middle; /* Para alinear bien con el texto si lo hay */
+  font-size: 1.3em;
+  vertical-align: middle;
 }
 
+/* Iconos de gestión */
+.management-icon,
+.profile-icon {
+  font-size: 1.3em; /* Ajusta el tamaño de los iconos */
+}
 
-
-/* Estilos para el botón de hamburguesa (oculto por defecto en desktop) */
+/* Estilos para el botón de hamburguesa */
 .hamburger-menu {
   display: none;
   flex-direction: column;
@@ -130,24 +129,98 @@
   transition: all 0.3s ease-in-out;
 }
 
-/* Media Queries para Navbar responsive (menos ancho o desplegable) */
+/* Estilos para el Dropdown de Gestión */
+.nav-item.has-dropdown {
+  position: relative; /* Asegura que el menú desplegable se posicione relativo a este item */
+}
+
+.nav-link-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 5px 0; /* Consistente con otros nav-item a */
+}
+
+.dropdown-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 100%; /* Debajo del elemento padre */
+  left: 0;
+  background-color: rgb(45, 45, 90); /* Un tono ligeramente más oscuro que la navbar */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  min-width: 200px; /* Ancho mínimo para el dropdown */
+  z-index: 1001; /* Por encima de la navbar */
+
+  display: none; /* Oculto por defecto */
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+  pointer-events: none; /* No interactuable cuando oculto */
+}
+
+.dropdown-menu.open {
+  display: block; /* Mostrar cuando está abierto */
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto; /* Interactuable cuando abierto */
+}
+
+.dropdown-item {
+  padding: 0;
+}
+
+.dropdown-item a {
+  display: block; /* Para que ocupe todo el ancho del item */
+  padding: 10px 15px;
+  color: white;
+  text-decoration: none;
+  font-size: 1em;
+  white-space: nowrap; /* Evita que el texto se envuelva */
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item a:hover {
+  background-color: rgb(65, 65, 120); /* Color de fondo al pasar el mouse */
+  color: #cceeff;
+}
+
+.dropdown-item a.active {
+  background-color: rgb(65, 65, 120);
+  border-left: 3px solid #ffffff; /* Barra lateral para activo */
+  padding-left: 12px; /* Ajustar padding por la barra */
+  font-weight: bold;
+}
+
+.dropdown-arrow {
+  transition: transform 0.2s ease-in-out;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg); /* Rotar la flecha cuando el menú está abierto */
+}
+
+
+/* Media Queries para Navbar responsive */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     padding: 20px 20px;
-
   }
 
   .bar-logo {
-  height: 120px; /* Ajusta esto al tamaño deseado para tu logo */
-  width: auto; /* Mantener la proporción */
-  position: absolute;
-  top: 50%;
-  left: 20px;
-  transform: translateY(-50%);
-}
+    height: 120px;
+    width: auto;
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+  }
 
   .navbar-left {
     width: 100%;
@@ -160,14 +233,15 @@
   .navbar-nav {
     flex-direction: column;
     position: absolute;
-    top: 60px;
+    top: 50px; /* Ajusta esto si el padding de la navbar cambia */
     left: 0;
     width: 100%;
-    background-color: rgb(57, 57, 110); 
+    background-color: rgb(57, 57, 110);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    transform: translateY(-160%);
+    transform: translateY(-160%); /* Oculto por defecto */
     opacity: 0;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    pointer-events: none; /* No interactuable cuando oculto */
   }
 
   .navbar-nav.open {
@@ -183,7 +257,7 @@
   }
 
   .nav-item:last-child {
-      border-bottom: none;
+    border-bottom: none;
   }
 
   .nav-item a,
@@ -194,32 +268,78 @@
     width: 100%;
     box-sizing: border-box;
     text-align: left;
-    /* Remover flex en móvil para que el botón ocupe todo el ancho */
-    display: flex; /* Mantenemos flex para alinear icono/texto */
+    display: flex;
     align-items: center;
   }
-  /* Estilos para el enlace activo en móvil */
+
   .nav-item a.active {
-    color: #ffffff; /* Color blanco para el elemento activo en móvil */
-    background-color: rgba(255,255,255,0.08); /* Un fondo sutil para el elemento activo en móvil */
-    border-left: 5px solid #ffffff; /* Una barra lateral blanca para destacarlo */
-    padding-left: 15px; /* Ajusta el padding para la barra lateral */
-    border-bottom: none; /* Quita el borde inferior si estaba */
+    color: #ffffff;
+    background-color: rgba(255,255,255,0.08);
+    border-left: 5px solid #ffffff;
+    padding-left: 15px;
+    border-bottom: none;
   }
 
   .nav-logout-button {
-      background-color: transparent;
-      color: #d8672a;
-      font-weight: bold;
-      border: none;
-      /* text-align: left; Esto se maneja con 'justify-content: flex-start' en el display flex */
+    background-color: transparent;
+    color: #d8672a;
+    font-weight: bold;
+    border: none;
   }
   .nav-logout-button:hover {
-      background-color: rgba(255,255,255,0.1);
+    background-color: rgba(255,255,255,0.1);
   }
 
-  /* Ocultar el texto "Cerrar Sesión" en móvil si solo quieres el icono */
   .logout-text {
-    display: none; /* Oculta el texto en pantallas pequeñas para que solo quede el icono */
+    display: none;
+  }
+
+  /* Estilos del Dropdown de Gestión en móvil */
+  .nav-item.has-dropdown {
+    position: static; /* No absoluto en móvil, se expande en línea */
+  }
+
+  .dropdown-menu {
+    position: static; /* Se expande en línea */
+    background-color: rgb(35, 35, 70); /* Un tono aún más oscuro para el sub-submenú */
+    box-shadow: none;
+    border-radius: 0;
+    min-width: auto;
+    width: 100%; /* Ocupa todo el ancho */
+    padding-left: 20px; /* Indentación para los sub-items */
+    transform: translateY(0); /* No hay transformación de posición */
+    opacity: 1; /* Siempre visible si el padre está abierto */
+    pointer-events: auto; /* Siempre interactuable si el padre está abierto */
+    display: none; /* Oculto por defecto, se muestra con .open */
+  }
+
+  .dropdown-menu.open {
+    display: flex; /* Usar flex para la columna de items */
+    flex-direction: column;
+  }
+
+  .dropdown-item a {
+    padding: 10px 40px; /* Más padding para los items del submenú en móvil */
+    font-size: 0.95em;
+  }
+
+  .dropdown-item a.active {
+    border-left: 3px solid #ffffff; /* Barra lateral para activo en sub-menú */
+    padding-left: 17px; /* Ajustar padding por la barra */
+  }
+}
+
+/* Media Query para pantallas muy pequeñas si es necesario */
+@media (max-width: 480px) {
+  .bar-logo {
+    height: 100px;
+    left: 10px;
+  }
+  .navbar {
+    padding: 15px 10px;
+  }
+  .nav-item a,
+  .nav-logout-button {
+    padding: 12px 15px;
   }
 }

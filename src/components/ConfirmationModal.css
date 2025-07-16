@@ -1,0 +1,105 @@
+/* src/components/ConfirmationModal.css */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  animation: slideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.modal-message {
+  font-size: 1.2em;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.modal-button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  flex: 1; /* Permite que los botones ocupen espacio equitativamente */
+  max-width: 150px; /* Limita el ancho de los botones */
+}
+
+.modal-button.confirm {
+  background-color: #28a745; /* Verde para confirmar */
+  color: white;
+}
+
+.modal-button.confirm:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.modal-button.cancel {
+  background-color: #6c757d; /* Gris para cancelar */
+  color: white;
+}
+
+.modal-button.cancel:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 600px) {
+  .modal-content {
+    padding: 20px;
+    width: 95%;
+  }
+  .modal-message {
+    font-size: 1.1em;
+  }
+  .modal-actions {
+    flex-direction: column; /* Apilar botones en pantallas pequeñas */
+    gap: 10px;
+  }
+  .modal-button {
+    width: 100%;
+    max-width: none; /* Eliminar límite de ancho */
+  }
+}

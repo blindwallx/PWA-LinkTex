@@ -2,7 +2,7 @@
 import React, { useState, type FormEvent } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebaseConfig';
-import { doc, setDoc, collection, addDoc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, setDoc, collection, addDoc, getDoc} from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/ltcadena2.png';
 import { FaCopy } from 'react-icons/fa';
@@ -24,7 +24,6 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState('');
   const [companyName, setCompanyName] = useState(''); // Para registro de admin
   const [joinCompanyId, setJoinCompanyId] = useState(''); // Para registro de operario
-  // NUEVOS ESTADOS PARA NOMBRE, APELLIDO, TELÉFONO
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -61,13 +60,11 @@ const Register: React.FC = () => {
       setLoading(false);
       return;
     }
-    // El teléfono podría ser opcional o con validación más compleja si se requiere
-    // if (!phoneNumber.trim()) {
-    //   setError("Por favor, introduce tu número de teléfono.");
-    //   setLoading(false);
-    //   return;
-    // }
-
+    if (!phoneNumber.trim()) { // Mantener como requerido por ahora, puedes cambiarlo
+      setError("Por favor, introduce tu número de teléfono.");
+      setLoading(false);
+      return;
+    }
 
     try {
       // Lógica de registro para ADMINISTRADOR (crear nueva empresa)
@@ -100,10 +97,10 @@ const Register: React.FC = () => {
           role: "admin",
           companyId: companyId,
           createdAt: new Date(),
-          // NUEVOS CAMPOS A GUARDAR EN FIRESTORE
           firstName: firstName,
           lastName: lastName,
           phoneNumber: phoneNumber,
+          status: "approved" // Los administradores se aprueban automáticamente
         });
         console.log("Paso 3 (Admin) completado: Documento de usuario creado exitosamente en Firestore.");
 
@@ -140,30 +137,27 @@ const Register: React.FC = () => {
         const existingCompanyName = companyData?.name;
         console.log("Paso 2 (Operario) completado: Company ID verificado. Nombre de empresa:", existingCompanyName);
 
-        console.log("Paso 3 (Operario): Actualizando documento de la empresa para añadir operario...");
-        await updateDoc(companyDocRef, {
-          operarioUsers: arrayUnion(user.uid) // Añadir el UID del operario al array de operarios
-        });
-        console.log("Paso 3 (Operario) completado: Documento de empresa actualizado.");
+        // NOTA: No añadimos el operario a 'operarioUsers' de la empresa aquí.
+        // Esto se hará solo cuando el administrador lo apruebe.
 
-        console.log("Paso 4 (Operario): Intentando crear documento del usuario en la colección 'users' para UID:", user.uid);
+        console.log("Paso 3 (Operario): Intentando crear documento del usuario en la colección 'users' para UID:", user.uid);
         await setDoc(doc(db, "users", user.uid), {
           email: user.email,
           role: "operario",
           companyId: joinCompanyId,
           createdAt: new Date(),
-          // NUEVOS CAMPOS A GUARDAR EN FIRESTORE
           firstName: firstName,
           lastName: lastName,
           phoneNumber: phoneNumber,
+          status: "pending" // Los operarios tienen un estado inicial de pendiente
         });
-        console.log("Paso 4 (Operario) completado: Documento de usuario creado exitosamente en Firestore.");
+        console.log("Paso 3 (Operario) completado: Documento de usuario creado exitosamente en Firestore con estado 'pending'.");
 
         setAssignedCompanyId(joinCompanyId);
         setAssignedCompanyName(existingCompanyName);
         setUserRoleOnSuccess('operario');
         setRegistrationSuccess(true);
-        console.log('Registro completo (Operario): Usuario, empresa asignada y rol asignado como operario.');
+        console.log('Registro completo (Operario): Usuario, empresa asignada y rol asignado como operario, pendiente de aprobación.');
       }
     } catch (err: unknown) {
       if (isFirebaseAuthError(err)) {
@@ -237,11 +231,15 @@ const Register: React.FC = () => {
             <p>Tu cuenta ha sido creada como operario.</p>
             <p>Te has unido a la empresa: <strong>{assignedCompanyName}</strong></p>
             <p>El ID de la empresa es: <strong>{assignedCompanyId}</strong></p>
-            <p>Ya puedes iniciar sesión con tus credenciales.</p>
+            <p className="pending-approval-message">
+              Tu solicitud de ingreso está **pendiente de aprobación** por el administrador de la empresa.
+              Recibirás una notificación cuando tu cuenta sea activada.
+            </p>
+            <p>Ya puedes intentar iniciar sesión con tus credenciales, pero no podrás acceder al dashboard hasta ser aprobado.</p>
           </>
         )}
-        <button onClick={() => navigate('/dashboard')} className="go-to-dashboard-button">
-          Ir al Dashboard
+        <button onClick={() => navigate('/login')} className="go-to-dashboard-button">
+          Ir a Iniciar Sesión
         </button>
         <p className="login-link">
           ¿Ya tienes una cuenta? <Link to="/login">Inicia Sesión aquí</Link>
@@ -301,7 +299,7 @@ const Register: React.FC = () => {
 
         <label htmlFor="phone-number">Teléfono:</label>
         <input
-          type="tel" // Usar type="tel" para teléfonos
+          type="tel"
           placeholder="Tu número de teléfono"
           id='phone-number'
           value={phoneNumber}

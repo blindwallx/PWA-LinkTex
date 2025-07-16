@@ -11,14 +11,14 @@ import { doc, getDoc } from 'firebase/firestore';
 interface MainLayoutProps {
   userRole: string | null;
   companyId: string | null;
-  // AÑADIR NUEVAS PROPS AL INTERFACE
   firstName: string | null;
   lastName: string | null;
   phoneNumber: string | null;
-  email: string | null; // AÑADIR LA PROPIEDAD EMAIL AQUÍ
+  email: string | null;
+  userStatus: string | null; // Nuevo prop para el estado del usuario
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ userRole, companyId, firstName, lastName, phoneNumber, email }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ userRole, companyId, firstName, lastName, phoneNumber, email, userStatus }) => {
   const [companyName, setCompanyName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -56,8 +56,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ userRole, companyId, firstName,
     <div className="main-layout">
       <Navbar userRole={userRole} />
       <main className="content">
-        {/* PASAR LOS NUEVOS DATOS AL CONTEXTO */}
-        <Outlet context={{ userRole, companyId, companyName, firstName, lastName, phoneNumber, email }} />
+        {/* PASAR EL NUEVO DATO userStatus AL CONTEXTO */}
+        <Outlet context={{ userRole, companyId, companyName, firstName, lastName, phoneNumber, email, userStatus }} />
       </main>
     </div>
   );

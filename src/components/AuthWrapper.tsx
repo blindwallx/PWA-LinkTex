@@ -10,21 +10,100 @@ import Dashboard from './Dashboard';
 import LoadingSpinner from './LoadingSpinner';
 import MainLayout from './MainLayout';
 import ProductManagement from './ProductManagement';
-import Profile from './Profile'; // Importa el nuevo componente Profile
+import Profile from './Profile';
+import OperariosManagement from './OperariosManagement'; // Importa el nuevo componente
 
 interface ProtectedRouteProps {
   children: ReactNode;
   user: User | null;
   loading: boolean;
+  userStatus: string | null; // Nuevo prop para el estado del usuario
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, user, loading }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, user, loading, userStatus }) => {
   if (loading) {
     return <LoadingSpinner />;
   }
   if (!user) {
     return <Navigate to="/login" replace />;
   }
+  // Si el usuario es un operario y su estado es 'pending', no permitir acceso a las rutas protegidas.
+  // Mostrar un mensaje de pendiente de aprobación.
+  if (userStatus === 'pending') {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#f0f2f5',
+        textAlign: 'center',
+        padding: '20px'
+      }}>
+        <h2 style={{ color: '#e67e22', fontSize: '2em', marginBottom: '15px' }}>Acceso Pendiente</h2>
+        <p style={{ color: '#555', fontSize: '1.1em', maxWidth: '500px' }}>
+          Tu cuenta está pendiente de aprobación por el administrador de la empresa.
+          Por favor, espera a que tu solicitud sea revisada.
+        </p>
+        <p style={{ color: '#555', fontSize: '1.1em', maxWidth: '500px' }}>
+          Recibirás una notificación cuando tu estado cambie.
+        </p>
+        <button
+          onClick={() => auth.signOut()}
+          style={{
+            marginTop: '30px',
+            padding: '10px 20px',
+            backgroundColor: '#3498db',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '1em'
+          }}
+        >
+          Cerrar Sesión
+        </button>
+      </div>
+    );
+  }
+  // Si el usuario es 'rejected', también podemos mostrar un mensaje y forzar el cierre de sesión
+  if (userStatus === 'rejected') {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#f0f2f5',
+        textAlign: 'center',
+        padding: '20px'
+      }}>
+        <h2 style={{ color: '#e74c3c', fontSize: '2em', marginBottom: '15px' }}>Acceso Denegado</h2>
+        <p style={{ color: '#555', fontSize: '1.1em', maxWidth: '500px' }}>
+          Tu solicitud de ingreso a la empresa ha sido rechazada por el administrador.
+          Si crees que esto es un error, por favor contacta al administrador de la empresa.
+        </p>
+        <button
+          onClick={() => auth.signOut()}
+          style={{
+            marginTop: '30px',
+            padding: '10px 20px',
+            backgroundColor: '#e74c3c',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '1em'
+          }}
+        >
+          Cerrar Sesión
+        </button>
+      </div>
+    );
+  }
+  // Si el usuario no es 'pending' ni 'rejected' (es decir, está aprobado o es admin), permitir acceso
   return <>{children}</>;
 };
 
@@ -36,7 +115,8 @@ const AuthWrapper: React.FC = () => {
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null); // Añadir estado para email
+  const [email, setEmail] = useState<string | null>(null);
+  const [userStatus, setUserStatus] = useState<string | null>(null); // NUEVO ESTADO PARA EL STATUS
 
   const [globalError, setGlobalError] = useState<string | null>(null);
   const location = useLocation();
@@ -50,7 +130,7 @@ const AuthWrapper: React.FC = () => {
 
       if (user) {
         setLoading(true);
-        setEmail(user.email); // Establecer el email desde el objeto user de Firebase Auth
+        setEmail(user.email);
 
         try {
           const userDocRef = doc(db, "users", user.uid);
@@ -63,6 +143,7 @@ const AuthWrapper: React.FC = () => {
             setFirstName(userData.firstName as string || null);
             setLastName(userData.lastName as string || null);
             setPhoneNumber(userData.phoneNumber as string || null);
+            setUserStatus(userData.status as string || null); // OBTENER EL STATUS
 
             setGlobalError(null);
             setLoading(false);
@@ -86,6 +167,7 @@ const AuthWrapper: React.FC = () => {
                     setFirstName(userDataRetry.firstName as string || null);
                     setLastName(userDataRetry.lastName as string || null);
                     setPhoneNumber(userDataRetry.phoneNumber as string || null);
+                    setUserStatus(userDataRetry.status as string || null); // OBTENER EL STATUS DESPUÉS DEL RETRASO
 
                     setGlobalError(null);
                     console.log("Documento de usuario encontrado después del retraso.");
@@ -97,7 +179,8 @@ const AuthWrapper: React.FC = () => {
                     setFirstName(null);
                     setLastName(null);
                     setPhoneNumber(null);
-                    setEmail(null); // Limpiar email
+                    setEmail(null);
+                    setUserStatus(null); // Limpiar status
                     auth.signOut();
                     setLoading(false);
                     console.error("Documento de usuario no encontrado después del retraso. Cerrando sesión.");
@@ -110,7 +193,8 @@ const AuthWrapper: React.FC = () => {
                   setFirstName(null);
                   setLastName(null);
                   setPhoneNumber(null);
-                  setEmail(null); // Limpiar email
+                  setEmail(null);
+                  setUserStatus(null); // Limpiar status
                   auth.signOut();
                   setLoading(false);
                 }
@@ -123,7 +207,8 @@ const AuthWrapper: React.FC = () => {
               setFirstName(null);
               setLastName(null);
               setPhoneNumber(null);
-              setEmail(null); // Limpiar email
+              setEmail(null);
+              setUserStatus(null); // Limpiar status
               auth.signOut();
               setLoading(false);
               console.error("Documento de usuario no encontrado para un usuario que no está registrándose. Cerrando sesión.");
@@ -137,7 +222,8 @@ const AuthWrapper: React.FC = () => {
           setFirstName(null);
           setLastName(null);
           setPhoneNumber(null);
-          setEmail(null); // Limpiar email
+          setEmail(null);
+          setUserStatus(null); // Limpiar status
           auth.signOut();
           setLoading(false);
         }
@@ -149,7 +235,8 @@ const AuthWrapper: React.FC = () => {
         setFirstName(null);
         setLastName(null);
         setPhoneNumber(null);
-        setEmail(null); // Limpiar email
+        setEmail(null);
+        setUserStatus(null); // Limpiar status
         setGlobalError(null);
         setLoading(false);
       }
@@ -171,14 +258,15 @@ const AuthWrapper: React.FC = () => {
         <Route
           path="/"
           element={
-            <ProtectedRoute user={currentUser} loading={loading}>
+            <ProtectedRoute user={currentUser} loading={loading} userStatus={userStatus}> {/* Pasar userStatus */}
               <MainLayout
                 userRole={userRole}
                 companyId={companyId}
                 firstName={firstName}
                 lastName={lastName}
                 phoneNumber={phoneNumber}
-                email={email} // Pasar email a MainLayout
+                email={email}
+                userStatus={userStatus} // Pasar userStatus a MainLayout
               />
             </ProtectedRoute>
           }
@@ -186,7 +274,8 @@ const AuthWrapper: React.FC = () => {
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="product-management" element={<ProductManagement />} />
-          <Route path="profile" element={<Profile />} /> {/* NUEVA RUTA PARA EL PERFIL */}
+          <Route path="profile" element={<Profile />} />
+          <Route path="operarios-management" element={<OperariosManagement />} /> {/* NUEVA RUTA */}
         </Route>
 
         <Route path="*" element={loading ? <LoadingSpinner /> : <Navigate to="/login" />} />

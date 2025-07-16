@@ -1,0 +1,331 @@
+/* src/components/OperariosManagement.css */
+
+.operarios-management-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  background-color: #e9ebee;
+  color: #333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 30px 20px;
+  box-sizing: border-box;
+  min-height: calc(100vh - 60px);
+}
+
+.operarios-management-title {
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-size: 2.8em;
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+}
+
+.operarios-management-description {
+  color: #555;
+  font-size: 1.1em;
+  line-height: 1.6;
+  max-width: 700px;
+  margin-bottom: 30px;
+  text-align: center;
+  padding: 0 10px;
+}
+
+.operarios-section {
+  width: 95%;
+  max-width: 1000px;
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.operarios-section h3 {
+  color: #34495e;
+  margin-bottom: 20px;
+  font-size: 1.8em;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.pending-section h3 {
+  color: #e67e22; /* Naranja para pendientes */
+}
+
+.approved-section h3 {
+  color: #28a745; /* Verde para aprobados */
+}
+
+.rejected-section h3 {
+  color: #e74c3c; /* Rojo para rechazados */
+}
+
+.admin-section h3 {
+  color: #007bff; /* Azul para administradores */
+}
+
+/* Estilos de tabla para pantallas grandes */
+.table-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.operarios-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.operarios-table th,
+.operarios-table td {
+  border: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.operarios-table th {
+  background-color: #f2f2f2;
+  color: #333;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+.operarios-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.operarios-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.actions-cell {
+  white-space: nowrap;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.approve-button,
+.reject-button,
+.change-role-button,
+.delete-button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.approve-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.approve-button:hover {
+  background-color: #218838;
+}
+
+.reject-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.reject-button:hover {
+  background-color: #c0392b;
+}
+
+.change-role-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.change-role-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-button {
+  background-color: #6c757d;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #5a6268;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: white;
+}
+
+.status-badge.pending {
+  background-color: #e67e22;
+}
+
+.status-badge.approved {
+  background-color: #28a745;
+}
+
+.status-badge.rejected {
+  background-color: #e74c3c;
+}
+
+.status-badge.admin {
+  background-color: #007bff;
+}
+.status-badge.operario {
+  background-color: #6c757d;
+}
+
+.self-actions-message {
+  font-size: 0.9em;
+  color: #666;
+  font-style: italic;
+  padding: 8px 15px; /* Para que tenga un tamaño similar a un botón */
+  display: inline-block; /* Para aplicar padding */
+}
+
+.feedback-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #c3e6cb;
+  text-align: center;
+  width: 90%;
+  max-width: 700px;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #f5c6cb;
+  text-align: center;
+  width: 90%;
+  max-width: 700px;
+}
+
+/* Estilos para las tarjetas en móvil */
+.operarios-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.operario-card {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card-item {
+  font-size: 1em;
+  color: #444;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed #eee;
+  padding-bottom: 5px;
+}
+
+.card-item:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.card-item strong {
+  color: #2c3e50;
+  min-width: 80px; /* Asegura que el label tenga un ancho mínimo */
+  text-align: left;
+  margin-right: 10px;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+/* Media Queries para alternar entre tabla y tarjetas */
+@media (max-width: 768px) {
+  .operarios-table {
+    display: none; /* Ocultar tabla en móvil */
+  }
+  .operarios-cards-container {
+    display: flex; /* Mostrar tarjetas en móvil */
+  }
+  .operarios-management-title {
+    font-size: 2.2em;
+  }
+  .operarios-section {
+    padding: 20px;
+    width: 98%;
+  }
+  .operarios-section h3 {
+    font-size: 1.5em;
+  }
+  .approve-button,
+  .reject-button,
+  .change-role-button,
+  .delete-button {
+    padding: 10px 15px; /* Aumentar padding para mejor touch */
+    font-size: 0.9em;
+    width: 100%; /* Ocupar todo el ancho en móvil */
+  }
+  .actions-cell {
+    flex-direction: column; /* Apilar botones en pantallas medianas */
+    gap: 5px;
+  }
+  .self-actions-message {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (min-width: 769px) {
+  .operarios-table {
+    display: table; /* Mostrar tabla en escritorio */
+  }
+  .operarios-cards-container {
+    display: none; /* Ocultar tarjetas en escritorio */
+  }
+}
+
+@media (max-width: 480px) {
+  .operarios-management-title {
+    font-size: 1.8em;
+  }
+  .operarios-section {
+    padding: 15px;
+  }
+  .card-item {
+    flex-direction: column; /* Apilar label y valor en tarjetas muy pequeñas */
+    align-items: flex-start;
+  }
+  .card-item strong {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+}
