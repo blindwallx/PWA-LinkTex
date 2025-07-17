@@ -4,93 +4,102 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* Centra el contenido verticalmente si hay espacio */
   min-height: 100vh;
-  background-color: rgba(255, 255, 255, 0.8); /* Un fondo gris claro agradable */
-  padding: 20px;
+  background-color: #f0f2f5; /* Un fondo gris claro agradable */
+  padding: 20px; /* Padding general para el contenedor */
   box-sizing: border-box;
   width: 100%;
+  overflow-y: auto; /* Permite scroll solo si el contenido excede la altura, pero intentaremos evitarlo */
 }
 
-.myLogo{
-  position: absolute;
-  top: 8%;
-  left: 20px;
-  transform: translateY(-50%);
-  height: 200px;
-
+.myLogo {
+  height: 120px; /* Altura reducida para más espacio vertical */
+  width: auto; /* Mantener la proporción */
+  margin-bottom: 10px; /* Margen inferior reducido */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .register-container h2 {
   color: rgb(57, 57, 110);
-  margin-bottom: 20px;
-  font-size: 2.2em;
+  margin-bottom: 15px; /* Margen inferior reducido */
+  font-size: 2.0em; /* Tamaño de fuente ligeramente más pequeño */
   font-weight: 700;
   text-align: center;
-  position: absolute;
-  top: 60px;
+  margin-top: -50px;
 }
 
 .register-form {
-  background-color: rgba(57, 57, 110, 0.6);
-  padding: 40px;
+  background-color: rgba(57, 57, 110, 0.6); /* Fondo restaurado */
+  padding: 20px; /* Padding reducido para ahorrar espacio vertical */
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
+  max-width: 500px; /* Ancho máximo aumentado para escritorio para más espacio horizontal */
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px; /* Espacio reducido entre elementos del formulario */
   text-align: left;
 }
 
 .register-form label {
   display: block;
-  margin-bottom: 8px;
-  color: #555;
+  margin-bottom: 3px; /* Margen aún más reducido */
+  color: white; /* Color de texto para labels cambiado a blanco para contraste */
   font-weight: bold;
 }
 
 .register-form input[type="text"],
 .register-form input[type="email"],
+.register-form input[type="tel"],
 .register-form input[type="password"] {
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 10px;
-  border: 2px solid rgba(0, 0, 0, 0.4);
+  background-color: rgba(255, 255, 255, 0.1); /* Fondo de inputs ajustado para contraste */
+  padding: 5px; /* Padding reducido */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Borde ajustado para contraste */
   border-radius: 8px;
-  font-size: 1.1em;
-  width: 100%;
-  box-sizing: border-box; /* Asegura que el padding no aumente el ancho total */
+  font-size: 0.8em; /* Tamaño de fuente ligeramente más pequeño */
+  width: 70%;
+  box-sizing: border-box;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  color: white; /* Color del texto de entrada a blanco */
 }
 
 .register-form input[type="text"]:focus,
+.register-form input[type="tel"]:focus,
 .register-form input[type="email"]:focus,
 .register-form input[type="password"]:focus {
   border-color: #007bff;
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-  outline: none; /* Elimina el contorno predeterminado del navegador */
+  outline: none;
+}
+
+.register-form input[type="text"]::placeholder,
+.register-form input[type="tel"]::placeholder,
+.register-form input[type="email"]::placeholder,
+.register-form input[type="password"]::placeholder{
+  color: white;
 }
 
 .register-form button {
-  width: 50%;
-  padding: 15px 20px;
-  background-color: #28a745; /* Un verde vibrante para la acción principal */
+  width: 30%; /* El botón ocupa todo el ancho */
+  padding: 12px 15px; /* Padding reducido */
+  background-color: #28a745;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1.2em;
+  font-size: 1.1em; /* Tamaño de fuente ligeramente más pequeño */
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-  transform: translateX(50%); /* Ajuste fino para centrado vertical real */
+  margin-top: 15px; /* Margen superior reducido */
 }
 
 .register-form button:hover {
-  background-color: #218838; /* Un tono más oscuro al pasar el ratón */
-  transform: translateX(48%); /* Un ligero efecto de levantamiento */
+  background-color: #218838;
+  transform: translateY(-2px); /* Efecto de levantamiento */
 }
 
 .register-form button:disabled {
@@ -101,24 +110,25 @@
 }
 
 .error-message {
-  background-color: #ffe0e0;
+  background-color: #ffebeb; /* Fondo más suave para errores */
   color: #d32f2f;
-  padding: 12px 20px;
+  padding: 10px 15px; /* Padding reducido */
   border-radius: 8px;
-  margin-bottom: 25px;
+  margin-bottom: 15px; /* Margen inferior reducido */
   border: 1px solid #d32f2f;
   text-align: center;
   font-weight: bold;
-  font-size: 0.95em;
+  font-size: 0.9em; /* Tamaño de fuente ligeramente más pequeño */
   width: 100%;
-  max-width: 400px;
+  max-width: 500px; /* Consistente con el ancho máximo del formulario */
   box-sizing: border-box;
 }
 
 .login-link {
-  margin-top: 25px;
-  font-size: 1em;
-  color: #555;
+  margin-top: 15px; /* Margen superior reducido */
+  font-size: 0.95em; /* Tamaño de fuente ligeramente más pequeño */
+  color: rgb(97, 97, 97); /* Color del enlace de login cambiado a blanco */
+  text-align: center; /* Centrar el enlace de login */
 }
 
 .login-link a {
@@ -133,53 +143,72 @@
   text-decoration: underline;
 }
 
-/* Estilos para el mensaje de éxito de registro */
+/* Estilos para el mensaje de éxito de registro (Operario - color naranja) */
 .register-container.success-message {
-  background-color: #e6ffe6; /* Fondo verde claro para éxito */
-  border: 1px solid #28a745;
-  color: #1a7a2e;
+  background-color: #f8dbbe;
+  border: 1px solid #a76828;
+  color: #a76828; /* Color de texto principal para el mensaje de operario */
   text-align: center;
-  padding: 10px;
+  padding: 25px; /* Padding reducido */
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .register-container.success-message h2 {
-  color: #28a745;
-  margin-bottom: 20px;
+  color: #a76828; /* Color del h2 para el mensaje de operario */
+  margin-bottom: 15px; /* Margen inferior reducido */
+  font-size: 2em; /* Consistente con el h2 del formulario */
 }
 
+/* Estilos para el mensaje de éxito de registro (Administrador - color verde) */
+.register-container.success-message.admin-success-message {
+  background-color: #e6ffe6; /* Fondo verde claro */
+  border: 1px solid #28a745; /* Borde verde */
+  color: #1a7a2e; /* Color de texto principal verde */
+}
+
+.register-container.success-message.admin-success-message h2 {
+  color: #28a745; /* Color del h2 verde */
+}
+
+
 .register-container.success-message p {
-  margin-bottom: 15px;
-  line-height: 1.6;
-  font-size: 1.1em;
+  margin-bottom: 10px; /* Margen inferior reducido */
+  line-height: 1.5; /* Altura de línea ligeramente más ajustada */
+  font-size: 1.2em; /* Tamaño de fuente ligeramente más pequeño */
+  font-weight: bold;
 }
 
 .register-container.success-message strong {
-  color: #0056b3; /* Azul para resaltar el ID */
-  font-size: 1.2em;
-  word-break: break-all; /* Para asegurar que el ID largo no desborde */
+  color: #0056b3;
+  font-size: 1.1em; /* Tamaño de fuente ligeramente más pequeño */
+  word-break: break-all;
+  display: block;
 }
 
 .copy-button {
   background: none;
   border: none;
   cursor: pointer;
-  color: #007bff; /* Color del icono */
+  color: #007bff;
   margin-left: 8px;
   vertical-align: middle;
   padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2em; /* Tamaño del icono */
+  font-size: 1.1em; /* Tamaño de fuente ligeramente más pequeño */
 }
 
 .copy-button:hover {
-  color: #0056b3; /* Color al pasar el ratón */
+  color: #0056b3;
 }
 
 .copy-button:focus {
@@ -189,15 +218,15 @@
 .go-to-dashboard-button {
   background-color: #007bff;
   color: white;
-  padding: 14px 30px;
+  padding: 12px 25px; /* Padding reducido */
   border: none;
   border-radius: 8px;
-  font-size: 1.15em;
+  font-size: 1.05em; /* Tamaño de fuente ligeramente más pequeño */
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-top: 30px;
-  margin-bottom: 20px; /* Espacio antes del enlace de login */
+  margin-top: 20px; /* Margen superior reducido */
+  margin-bottom: 15px; /* Margen inferior reducido */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -206,49 +235,171 @@
   transform: translateY(-2px);
 }
 
+/* Estilos para los radio buttons */
+.registration-type-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Espacio reducido */
+  margin-bottom: 15px; /* Margen inferior reducido */
+  color: white;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* Espacio reducido */
+  font-size: 0.95em; /* Tamaño de fuente ligeramente más pequeño */
+  cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 16px; /* Radio button ligeramente más pequeño */
+  height: 16px; /* Radio button ligeramente más pequeño */
+  border: 2px solid #007bff;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.radio-label input[type="radio"]:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.radio-label input[type="radio"]:checked::before {
+  content: '';
+  display: block;
+  width: 7px; /* Tamaño ajustado */
+  height: 7px; /* Tamaño ajustado */
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Estilos para el modal de alerta personalizado */
+.custom-alert-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.custom-alert-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 300px;
+  width: 90%;
+}
+
+.custom-alert-content p {
+  margin-bottom: 15px;
+  font-size: 1em;
+  color: #333;
+}
+
+.custom-alert-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease;
+}
+
+.custom-alert-button:hover {
+  background-color: #0056b3;
+}
+
+
 /* Media Queries para responsividad */
 @media (max-width: 600px) {
   .register-container {
-    top: 40px;
-    padding: 40px;
+    padding: 15px; /* Padding ajustado para móvil */
+    justify-content: flex-start;
+  }
+
+  .myLogo {
+    height: 90px; /* Tamaño ajustado para pantallas móviles más pequeñas */
+    top: 0;
+  }
+
+  .register-container h2 {
+    font-size: 1.5em; /* Tamaño de fuente ajustado para móvil */
+    margin-bottom: 15px;
+    margin-top: -30px;
   }
 
   .register-form, .register-container.success-message {
-    padding: 25px;
-    margin: 15px; /* Asegura un pequeño margen en pantallas muy pequeñas */
+    padding: 20px; /* Padding ajustado para móvil */
+    margin: 0 15px; /* Margen horizontal aumentado para mejor espaciado desde los bordes */
+    max-width: calc(100% - 60px); /* Ajusta el ancho máximo según el nuevo margen */
   }
 
   .register-container.success-message {
-  width: 100%;
-  max-width: 450px;
-}
-
-.register-container.success-message strong {
-  display: flex;
-  flex-direction: column;
-}
-
-
-
-  .register-container h2 {
-    font-size: 1.8em;
-    margin-bottom: 15px;
+    padding: 15px;
   }
+
 
   .register-form input,
   .register-form button,
   .go-to-dashboard-button {
-    font-size: 1em;
-    padding: 12px;
+    font-size: 0.9em;
+    padding: 10px; /* Typo fix: was 10spx */
   }
 
   .error-message {
-    padding: 10px 15px;
-    font-size: 0.9em;
+    padding: 8px 10px;
+    font-size: 0.85em;
   }
 
-  .myLogo{
-    left: auto;
-    height: 170px;
+  .register-form button {
+    width: 50%;
+    transform: none;
+  }
+
+  .register-form button:hover {
+    transform: none;
+  }
+
+  .login-link {
+    font-size: 0.8em;
+  }
+}
+
+@media (max-width: 400px) {
+  .register-container {
+    padding: 10px; /* Padding aún más pequeño para pantallas muy estrechas */
+  }
+  .register-form, .register-container.success-message {
+    padding: 15px;
+    margin: 0 10px; /* Margen ajustado */
+    max-width: calc(100% - 40px);
+  }
+  .register-container h2 {
+    font-size: 1.3em;
+  }
+  .myLogo {
+    height: 90px;
   }
 }

@@ -40,7 +40,22 @@ const Register: React.FC = () => {
 
   // Función para mostrar feedback de copia (reutilizada del Dashboard)
   const showCopyFeedback = (message: string) => {
-    alert(message); // Por simplicidad, usamos alert. Se recomienda un modal personalizado.
+    // Por simplicidad, usamos alert. Se recomienda un modal personalizado.
+    // Reemplazar con un modal personalizado si es necesario, ya que alert() no debe usarse.
+    const feedbackModal = document.createElement('div');
+    feedbackModal.className = 'custom-alert-modal';
+    feedbackModal.innerHTML = `
+      <div class="custom-alert-content">
+        <p>${message}</p>
+        <button class="custom-alert-button">OK</button>
+      </div>
+    `;
+    document.body.appendChild(feedbackModal);
+
+    const closeButton = feedbackModal.querySelector('.custom-alert-button');
+    closeButton?.addEventListener('click', () => {
+      document.body.removeChild(feedbackModal);
+    });
   };
 
   const handleRegister = async (e: FormEvent) => {
@@ -183,9 +198,11 @@ const Register: React.FC = () => {
 
   if (registrationSuccess) {
     return (
-      <div className="register-container success-message">
+      <div className={`register-container success-message ${userRoleOnSuccess === 'admin' ? 'admin-success-message' : ''}`}>
         <img src={logo} className="myLogo" alt="LinkTex Logo" />
-        <h2>¡Registro Exitoso!</h2>
+        <h2 translate='no'>
+          {userRoleOnSuccess === 'admin' ? '¡Registro Exitoso!' : 'Solicitud de Registro Pendiente'}
+        </h2>
         {userRoleOnSuccess === 'admin' ? (
           <>
             <p>Tu cuenta ha sido creada como administrador de una nueva empresa.</p>
@@ -204,6 +221,7 @@ const Register: React.FC = () => {
                       showCopyFeedback("¡ID de empresa copiado!");
                     } catch (err) {
                       console.error('Error al copiar con execCommand:', err);
+                      // Fallback para navegadores que no soportan execCommand o en entornos restringidos
                       navigator.clipboard.writeText(assignedCompanyId)
                         .then(() => showCopyFeedback("¡ID de empresa copiado!"))
                         .catch(e => {
@@ -224,16 +242,12 @@ const Register: React.FC = () => {
                 <FaCopy />
               </button>
             </p>
-            <p>Guarda este ID, lo necesitarás si en el futuro necesitas añadir operarios o referenciar tu empresa.</p>
+            <p>Podrás ver este ID en tu Dashboard, lo necesitarás para añadir operarios o referenciar tu empresa.</p>
           </>
         ) : (
           <>
-            <p>Tu cuenta ha sido creada como operario.</p>
-            <p>Te has unido a la empresa: <strong>{assignedCompanyName}</strong></p>
-            <p>El ID de la empresa es: <strong>{assignedCompanyId}</strong></p>
-            <p className="pending-approval-message">
-              Tu solicitud de ingreso está **pendiente de aprobación** por el administrador de la empresa.
-              Recibirás una notificación cuando tu cuenta sea activada.
+            <p>Tu solicitud de ingreso a <strong>{assignedCompanyName}</strong> está **pendiente de aprobación** por el administrador
+              de la empresa. Recibirás una notificación cuando tu cuenta sea activada.
             </p>
             <p>Ya puedes intentar iniciar sesión con tus credenciales, pero no podrás acceder al dashboard hasta ser aprobado.</p>
           </>
@@ -241,9 +255,6 @@ const Register: React.FC = () => {
         <button onClick={() => navigate('/login')} className="go-to-dashboard-button">
           Ir a Iniciar Sesión
         </button>
-        <p className="login-link">
-          ¿Ya tienes una cuenta? <Link to="/login">Inicia Sesión aquí</Link>
-        </p>
       </div>
     );
   }
@@ -352,7 +363,7 @@ const Register: React.FC = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit" disabled={loading}>
+        <button type="submit" translate='no' disabled={loading}>
           {loading ? 'Registrando...' : 'Registrar'}
         </button>
       </form>
