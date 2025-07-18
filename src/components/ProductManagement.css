@@ -221,7 +221,7 @@
     text-align: left;
     border-bottom: 1px solid #e0e0e0;
     color: #333;
-    padding: 12px 15px; /* Ajuste para un poco más de espacio */
+    padding: 12px 50px; /* Ajuste para un poco más de espacio */
     font-weight: bold;
 }
 
@@ -323,11 +323,12 @@
     color: #074282;
 }
 
-.delete-button {
-    color: #af0516;
-}
-.delete-button:hover {
+.button-del{
     color: #57030c;
+}
+
+.button-del:hover {
+    color: #35070c;
     border: 1px solid #57030c;
 }
 

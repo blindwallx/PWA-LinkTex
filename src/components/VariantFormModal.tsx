@@ -1,24 +1,36 @@
 import React, { useState, useEffect, type ChangeEvent, type FormEvent } from 'react';
-import './Modal.css';
+import './Modal.css'; // ¡Importando tu Modal.css original ahora!
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { Timestamp } from 'firebase/firestore';
 
-// Definición completa de la variante tal como se almacena en Firestore
+export type Sizes = {
+    xs: number;
+    s: number;
+    m: number;
+    l: number;
+    xl: number;
+    '2xl': number;
+    '3xl': number;
+    '4xl': number;
+    '5xl': number;
+};
+
 interface ProductVariant {
     id?: string;
     color: string;
+    sizes: Sizes;
     stockInProduction: number;
     createdAt: Timestamp;
-    startDate: Timestamp; // <-- NUEVO: Fecha de inicio del lote
-    dueDate?: Timestamp; // <-- NUEVO: Fecha límite del lote (opcional)
+    startDate: Timestamp;
+    dueDate?: Timestamp;
 }
 
-// Nueva interfaz para los datos de entrada del formulario de variante (sin ID ni createdAt)
 interface ProductVariantFormData {
     color: string;
+    sizes: Sizes;
     stockInProduction: number;
-    startDate: Timestamp; // <-- NUEVO: Se enviará como Timestamp
-    dueDate?: Timestamp; // <-- NUEVO: Se enviará como Timestamp (opcional)
+    startDate: Timestamp;
+    dueDate?: Timestamp;
 }
 
 interface VariantFormModalProps {
@@ -40,7 +52,8 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
     onSaveVariant,
     onDeleteVariant,
 }) => {
-    // Función de ayuda para obtener la fecha de hoy como string YYYY-MM-DD
+    const allSizes: (keyof Sizes)[] = ['xs', 's', 'm', 'l', 'xl', '2xl', '3xl', '4xl', '5xl'];
+
     const getTodayDateString = () => {
         const today = new Date();
         const year = today.getFullYear();
@@ -49,7 +62,6 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
         return `${year}-${month}-${day}`;
     };
 
-    // Función de ayuda para formatear Timestamp a string YYYY-MM-DD
     const formatDateToInput = (timestamp?: Timestamp): string => {
         if (!timestamp) return '';
         const date = timestamp.toDate();
@@ -59,33 +71,66 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
         return `${year}-${month}-${day}`;
     };
 
+    const initialSizesState: Sizes = {
+        xs: 0, s: 0, m: 0, l: 0, xl: 0, '2xl': 0, '3xl': 0, '4xl': 0, '5xl': 0
+    };
+
     const [variantInput, setVariantInput] = useState<Omit<ProductVariantFormData, 'startDate' | 'dueDate'> & { startDate: string, dueDate: string }>({
         color: '',
+        sizes: { ...initialSizesState },
         stockInProduction: 0,
-        startDate: getTodayDateString(), // Por defecto la fecha de hoy en formato string
-        dueDate: '', // Por defecto vacío
+        startDate: getTodayDateString(),
+        dueDate: '',
     });
     const [editingVariantId, setEditingVariantId] = useState<string | undefined>(undefined);
     const [error, setError] = useState<string | null>(null);
 
+    const [shouldRender, setShouldRender] = useState(false); 
+
     useEffect(() => {
+        if (isOpen) {
+            setShouldRender(true); 
+        } else {
+            const timer = setTimeout(() => {
+                setShouldRender(false);
+            }, 300); 
+            return () => clearTimeout(timer); 
+        }
+
         if (!isOpen) {
             setVariantInput({
                 color: '',
+                sizes: { ...initialSizesState },
                 stockInProduction: 0,
-                startDate: getTodayDateString(), // Resetear a la fecha actual al cerrar
+                startDate: getTodayDateString(),
                 dueDate: '',
             });
             setEditingVariantId(undefined);
             setError(null);
         }
-    }, [isOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]); 
+
+    if (!shouldRender) {
+        return null;
+    }
 
     const handleVariantInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setVariantInput(prev => ({
             ...prev,
-            [name]: name === 'stockInProduction' ? parseFloat(value) : value
+            [name]: value
+        }));
+    };
+
+    const handleSizeInputChange = (size: keyof Sizes, value: string) => {
+        const parsedValue = parseInt(value, 10);
+        setVariantInput(prev => ({
+            ...prev,
+            sizes: {
+                ...prev.sizes,
+                [size]: isNaN(parsedValue) ? 0 : parsedValue
+            }
         }));
     };
 
@@ -93,6 +138,7 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
         setEditingVariantId(variant.id);
         setVariantInput({
             color: variant.color,
+            sizes: { ...variant.sizes },
             stockInProduction: variant.stockInProduction,
             startDate: formatDateToInput(variant.startDate),
             dueDate: formatDateToInput(variant.dueDate),
@@ -100,17 +146,16 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
         setError(null);
     };
 
+    const calculateTotalStock = (sizes: Sizes): number => {
+        return Object.values(sizes).reduce((sum, qty) => sum + qty, 0);
+    };
+
     const handleVariantSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setError(null);
 
-        // Validaciones básicas
         if (!variantInput.color.trim()) {
             setError("El color es requerido.");
-            return;
-        }
-        if (isNaN(variantInput.stockInProduction) || variantInput.stockInProduction <= 0) {
-            setError("La cantidad de stock debe ser un número válido mayor que cero.");
             return;
         }
         if (!variantInput.startDate) {
@@ -118,10 +163,16 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
             return;
         }
 
-        // Convertir las fechas de string a Timestamp de Firebase
+        const totalStock = calculateTotalStock(variantInput.sizes);
+        if (totalStock <= 0) {
+            setError("Debes ingresar al menos una cantidad para alguna talla.");
+            return;
+        }
+
         const dataToSave: ProductVariantFormData = {
             color: variantInput.color.trim(),
-            stockInProduction: variantInput.stockInProduction,
+            sizes: variantInput.sizes,
+            stockInProduction: totalStock,
             startDate: Timestamp.fromDate(new Date(variantInput.startDate)),
         };
 
@@ -131,13 +182,7 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
 
         try {
             await onSaveVariant(productId, dataToSave, editingVariantId);
-            setVariantInput({
-                color: '',
-                stockInProduction: 0,
-                startDate: getTodayDateString(),
-                dueDate: '',
-            });
-            setEditingVariantId(undefined);
+            onClose(); 
         } catch (err: unknown) {
             if (err instanceof Error) {
                 setError(err.message);
@@ -155,6 +200,7 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
                 setEditingVariantId(undefined);
                 setVariantInput({
                     color: '',
+                    sizes: { ...initialSizesState },
                     stockInProduction: 0,
                     startDate: getTodayDateString(),
                     dueDate: '',
@@ -169,11 +215,9 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
         }
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
+        <div className={`modal-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}>
+            <div className={`modal-content ${isOpen ? 'open' : ''}`} onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
                     <h3>Gestión de Lotes para "{productName}"</h3>
                     <button className="close-button" onClick={onClose}>&times;</button>
@@ -191,16 +235,30 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
                             onChange={handleVariantInputChange}
                             required
                         />
-                        <input
-                            type="number"
-                            name="stockInProduction"
-                            placeholder="Definir Cantidad (ej. 100)"
-                            value={variantInput.stockInProduction === 0 || isNaN(variantInput.stockInProduction) ? '' : variantInput.stockInProduction}
-                            onChange={handleVariantInputChange}
-                            min="0"
-                            step="1"
-                            required
-                        />
+
+                        {/* Contenedor de inputs de talla - usa una nueva clase para agruparlos */}
+                        <div className="sizes-input-container"> 
+                            {allSizes.map(size => (
+                                <div key={size} className="size-input-item"> 
+                                    <label htmlFor={`size-${size}`} className="size-label">{size.toUpperCase()}</label> 
+                                    <input
+                                        type="number"
+                                        id={`size-${size}`}
+                                        name={`size-${size}`}
+                                        value={variantInput.sizes[size] === 0 ? '' : variantInput.sizes[size]}
+                                        onChange={(e) => handleSizeInputChange(size, e.target.value)}
+                                        min="0"
+                                        step="1"
+                                        placeholder="0"
+                                        className="size-input" 
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        <p className="total-stock-display"> 
+                            **Cantidad total a producir:** {calculateTotalStock(variantInput.sizes)} unidades
+                        </p>
+
                         <label htmlFor="startDateInput" className="input-label">Fecha de Inicio:</label>
                         <input
                             type="date"
@@ -209,8 +267,7 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
                             value={variantInput.startDate}
                             onChange={handleVariantInputChange}
                             required
-                            // Deshabilitar la edición si estamos editando y el lote ya existe (startDate ya guardada)
-                            disabled={!!editingVariantId}
+                            disabled={!!editingVariantId} 
                         />
                         <label htmlFor="dueDateInput" className="input-label">Fecha Límite (opcional):</label>
                         <input
@@ -229,8 +286,9 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
                                     setEditingVariantId(undefined);
                                     setVariantInput({
                                         color: '',
+                                        sizes: { ...initialSizesState },
                                         stockInProduction: 0,
-                                        startDate: getTodayDateString(), // Resetear a la fecha actual al cancelar edición
+                                        startDate: getTodayDateString(),
                                         dueDate: '',
                                     });
                                     setError(null);
@@ -250,16 +308,25 @@ const VariantFormModal: React.FC<VariantFormModalProps> = ({
                                 {currentVariants.map(variant => (
                                     <li key={variant.id}>
                                         <span>
-                                            Color: {variant.color}, Stock: {variant.stockInProduction}
+                                            **Color:** {variant.color}
+                                            <br />
+                                            **Stock Total:** {variant.stockInProduction} unidades
+                                            <br />
+                                            **Cantidades por talla:** {
+                                                Object.entries(variant.sizes)
+                                                    .filter(([, qty]) => qty > 0)
+                                                    .map(([size, qty]) => `${size.toUpperCase()}: ${qty}`)
+                                                    .join(', ') || 'Ninguna talla definida'
+                                            }
                                             <br />
                                             Inicio: {formatDateToInput(variant.startDate)}
                                             {variant.dueDate && `, Límite: ${formatDateToInput(variant.dueDate)}`}
                                         </span>
                                         <div className="item-actions">
-                                            <button onClick={() => startEditingVariant(variant)} className="edit-button icon-button small-icon-button" title="Editar">
+                                            <button onClick={() => startEditingVariant(variant)} className="icon-button edit-button" title="Editar">
                                                 <FaEdit />
                                             </button>
-                                            <button onClick={() => handleDeleteVariant(variant.id!)} className="delete-button icon-button small-icon-button" title="Eliminar">
+                                            <button onClick={() => handleDeleteVariant(variant.id!)} className="icon-button delete-button" title="Eliminar">
                                                 <FaTrash />
                                             </button>
                                         </div>

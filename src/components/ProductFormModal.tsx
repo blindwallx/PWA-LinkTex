@@ -79,6 +79,20 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
         clearError();
     }, [editingProduct, isOpen, clearError]);
 
+    // **NUEVO EFECTO:** Para limpiar el mensaje de error automáticamente
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (errorMessage || localError) {
+            timer = setTimeout(() => {
+                setLocalError(null);
+                clearError(); // Llama a clearError para limpiar el error del padre también
+            }, 5000); // El error desaparecerá después de 5 segundos (5000 ms)
+        }
+        // Función de limpieza para evitar fugas de memoria si el componente se desmonta
+        // o si el error cambia antes de que el temporizador termine
+        return () => clearTimeout(timer);
+    }, [errorMessage, localError, clearError]); // Dependencias: Si el mensaje de error cambia, reinicia el temporizador
+
     // Si el modal no está abierto, no renderiza nada
     if (!isOpen) return null;
 
@@ -133,9 +147,9 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     <h2>{editingProduct ? 'Editar Prenda Base' : 'Añadir Nueva Prenda'}</h2>
                     <button className="close-button" onClick={() => { onClose(); clearError(); }}>&times;</button>
                 </div>
+                {/* Muestra errores locales o pasados por props */}
+                {(localError || errorMessage) && <p className="error-message">{localError || errorMessage}</p>}
                 <div className="modal-body">
-                    {/* Muestra errores locales o pasados por props */}
-                    {(localError || errorMessage) && <p className="error-message">{localError || errorMessage}</p>}
                     <form onSubmit={handleSubmit} className="product-form modal-form">
                         <input
                             type="text"

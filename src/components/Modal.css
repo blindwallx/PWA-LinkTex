@@ -82,7 +82,7 @@
 .modal-form input[type="text"],
 .modal-form input[type="number"],
 .modal-form input[type="date"] { /* <-- AÑADIDO: Aplicar estilos a input[type="date"] */
-    width: calc(100% - 20px);
+    width: calc(100% - 50px);
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ddd;
@@ -90,6 +90,8 @@
     box-sizing: border-box;
     font-size: 1em;
     background-color: rgba(0, 0, 0, 0.3);
+    color: #555;
+    font-weight: bold;
 }
 
 .modal-form input[type="date"]:disabled { /* <-- NUEVO: Estilo para input de fecha deshabilitado */
@@ -143,6 +145,10 @@
 .modal-form .form-actions .cancel-button:hover {
     background-color: #5a6268;
     transform: translateY(-1px);
+}
+
+.current-items-list span{
+    font-weight: bold;
 }
 
 .current-items-list h5 {
@@ -231,6 +237,53 @@
     background-color: #fafafa;
 }
 
+/* Estilos para el contenedor de inputs de talla (agrupa todos los cuadritos) */
+.sizes-input-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan en varias líneas si no caben */
+    gap: 15px; /* Espacio entre los cuadritos de talla */
+    margin-bottom: 20px; /* Espacio debajo del grupo de inputs de talla */
+    justify-content: flex-start; /* Alinea los elementos al inicio */
+}
+
+/* Estilos para cada item individual de input de talla (contenedor de label e input) */
+.size-input-item {
+    display: flex;
+    flex-direction: column; /* Apila la leyenda y el input */
+    align-items: center; /* Centra el contenido horizontalmente */
+    width: 80px; /* Ancho fijo para cada cuadrito */
+    text-align: center;
+}
+
+/* Estilos para las etiquetas de talla (la leyenda: XS, S, M, etc.) */
+.size-label {
+    font-size: 0.85em; /* Tamaño de fuente para la leyenda de la talla */
+    color: #666;
+    margin-bottom: 5px; /* Espacio entre la leyenda y el input */
+    font-weight: 600;
+}
+
+/* Estilos para los inputs de talla (los cuadritos donde se ingresa el número) */
+.size-input {
+    width: 60px; /* Ancho del cuadrito de input */
+    height: 40px; /* Altura del cuadrito de input */
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center; /* Centra el texto dentro del input */
+    font-size: 1em;
+    box-sizing: border-box; /* Incluye padding y borde en el ancho/alto */
+    -moz-appearance: textfield; /* Elimina las flechas en Firefox para inputs number */
+    color: #555;
+    font-weight: bold;
+}
+
+.size-input::-webkit-outer-spin-button,
+.size-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .modal-content {
@@ -240,6 +293,7 @@
 
     .modal-header h3 {
         font-size: 1.3em;
+        margin-top: 15px;
     }
 
     .modal-form input[type="text"],
